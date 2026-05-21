@@ -735,17 +735,35 @@ final class OAuthStore {
         }
 
         for item in store.accounts where item.enabled {
-            let alreadyImported = accounts.contains { account in
+            let existingIndex = accounts.firstIndex { account in
                 account.provider == .codex
                     && (
-                        account.externalID == item.accountID
+                        (item.accountID != nil && account.externalID == item.accountID)
                         || (item.email != nil && account.email == item.email)
                     )
             }
-            guard !alreadyImported else { continue }
 
             let expiresAt = item.expiresAt.map { Date(timeIntervalSince1970: TimeInterval($0) / 1000) }
             let createdAt = Date(timeIntervalSince1970: TimeInterval(item.addedAt ?? Int64(Date().timeIntervalSince1970 * 1000)) / 1000)
+            if let existingIndex {
+                accounts[existingIndex].label = item.accountLabel ?? accounts[existingIndex].label
+                accounts[existingIndex].email = item.email ?? accounts[existingIndex].email
+                accounts[existingIndex].externalID = item.accountID ?? accounts[existingIndex].externalID
+                accounts[existingIndex].token = OAuthToken(
+                    accessToken: item.accessToken,
+                    refreshToken: item.refreshToken ?? accounts[existingIndex].token.refreshToken,
+                    expiresAt: expiresAt,
+                    scope: accounts[existingIndex].token.scope,
+                    idToken: accounts[existingIndex].token.idToken
+                )
+                do {
+                    try persist(accounts[existingIndex])
+                } catch {
+                    print("OAuthStore.importCodexMultiAuthAccountsIfNeeded failed: \(error)")
+                }
+                continue
+            }
+
             let account = OAuthAccount(
                 label: item.accountLabel ?? item.email ?? "Codex Account",
                 provider: .codex,
@@ -1004,7 +1022,7 @@ struct CodexMultiAuthStore: Decodable {
 }
 
 struct CodexMultiAuthAccount: Decodable {
-    let accountID: String
+    let accountID: String?
     let accountLabel: String?
     let email: String?
     let refreshToken: String?
