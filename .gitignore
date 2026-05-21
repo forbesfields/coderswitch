@@ -49,5 +49,13 @@ coderswitch.sqlite-*
 *.coderswitchconfig
 auth.json
 
+# Local planning, audit, and build notes
+/FINDINGS*.md
+/FOR_CODERSWITCH*.md
+/MANUAL_TEST_CHECKLIST.md
+/PLAN.md
+/PROGRESS.md
+/security_best_practices_report.md
+
 # Local asset handoff copy; committed app assets live under CoderSwitch/Resources.
 /CoderSwitchMenuBarIcon.imageset/
