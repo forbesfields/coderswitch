@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/coderswitchicon.png" alt="CoderSwitch icon" width="180">
+</p>
+
 # CoderSwitch
 
 A local macOS menu bar app for managing AI subscriptions and API keys across multiple providers. Provides a single OpenAI- and Anthropic-compatible proxy endpoint for Claude Code and Codex.
