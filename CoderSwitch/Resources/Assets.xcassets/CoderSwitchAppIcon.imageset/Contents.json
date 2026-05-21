@@ -1,0 +1,18 @@
+{
+  "images" : [
+    {
+      "filename" : "CoderSwitchAppIcon.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "CoderSwitchAppIcon@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
