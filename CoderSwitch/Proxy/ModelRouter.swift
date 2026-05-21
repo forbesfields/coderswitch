@@ -138,8 +138,6 @@ extension Provider {
         case .anthropic: "anthropic-direct"
         case .openRouter: "openrouter"
         case .miniMax: "minimax"
-        case .ikunCode: "ikuncode"
-        case .fishXCode: "fishxcode"
         case .openAICompatible: "openai"
         case .anthropicCompatible: "anthropic"
         case .googleAntigravity: "antigravity"

@@ -11,8 +11,6 @@ enum Provider: String, CaseIterable, Codable, Identifiable, Hashable, Sendable {
     case anthropic
     case openRouter
     case miniMax
-    case ikunCode
-    case fishXCode
     case openAICompatible
     case anthropicCompatible
     case googleAntigravity
@@ -26,8 +24,6 @@ enum Provider: String, CaseIterable, Codable, Identifiable, Hashable, Sendable {
         case .anthropic: "Anthropic"
         case .openRouter: "OpenRouter"
         case .miniMax: "MiniMax"
-        case .ikunCode: "ikuncode.cc"
-        case .fishXCode: "fishxcode.com"
         case .openAICompatible: "OpenAI-compatible (custom)"
         case .anthropicCompatible: "Anthropic-compatible (custom)"
         case .googleAntigravity: "Google Antigravity"
@@ -41,8 +37,6 @@ enum Provider: String, CaseIterable, Codable, Identifiable, Hashable, Sendable {
         case .anthropic: "https://api.anthropic.com"
         case .openRouter: "https://openrouter.ai/api/v1"
         case .miniMax: "https://api.minimax.io/v1"
-        case .ikunCode: "https://api.ikuncode.cc/v1"
-        case .fishXCode: "https://api.fishxcode.com/v1"
         case .googleAntigravity: "https://generativelanguage.googleapis.com/v1beta"
         case .openAICompatible, .anthropicCompatible: ""
         }
@@ -57,7 +51,7 @@ enum Provider: String, CaseIterable, Codable, Identifiable, Hashable, Sendable {
 
     var compatibility: APICompatibility {
         switch self {
-        case .codex, .openAI, .openRouter, .miniMax, .ikunCode, .fishXCode, .openAICompatible, .googleAntigravity: .openAI
+        case .codex, .openAI, .openRouter, .miniMax, .openAICompatible, .googleAntigravity: .openAI
         case .anthropic, .anthropicCompatible: .anthropic
         }
     }

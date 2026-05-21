@@ -69,7 +69,9 @@ struct StatusPopover: View {
 private struct OAuthQuickSwitch: View {
     @Environment(AccountStore.self) private var accountStore
     @Environment(OAuthStore.self) private var oauthStore
+    @Environment(ProxySettings.self) private var settings
     @State private var isExpanded = false
+    @State private var statusMessage: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -89,6 +91,41 @@ private struct OAuthQuickSwitch: View {
             .buttonStyle(.borderless)
 
             if isExpanded {
+                let claudeAccounts = accountStore.accounts.filter(\.provider.isClaudeCodeCompatible)
+                if !claudeAccounts.isEmpty {
+                    Text("Claude Code")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                    ForEach(claudeAccounts) { account in
+                        Button {
+                            switchClaudeCode(to: account)
+                        } label: {
+                            HStack {
+                                Image(systemName: "terminal")
+                                    .font(.caption)
+                                Text(account.label)
+                                    .font(.caption)
+                                Spacer()
+                            }
+                        }
+                        .buttonStyle(.borderless)
+                        .disabled(!account.isEnabled || settings.adminKey.isEmpty)
+                    }
+
+                    Button {
+                        restoreOfficialClaude()
+                    } label: {
+                        HStack {
+                            Image(systemName: "arrow.uturn.backward")
+                                .font(.caption)
+                            Text("Official Claude")
+                                .font(.caption)
+                            Spacer()
+                        }
+                    }
+                    .buttonStyle(.borderless)
+                }
+
                 ForEach(OAuthProvider.allCases) { provider in
                     let accounts = oauthStore.accounts(for: provider)
                     if !accounts.isEmpty {
@@ -111,7 +148,35 @@ private struct OAuthQuickSwitch: View {
                         }
                     }
                 }
+
+                if let statusMessage {
+                    Text(statusMessage)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
+        }
+    }
+
+    private func switchClaudeCode(to account: Account) {
+        do {
+            try ClaudeCodeConfigSwitcher().switchToCoderSwitch(
+                account: account,
+                proxyBaseURL: settings.baseURL,
+                adminKey: settings.adminKey
+            )
+            statusMessage = "Claude Code switched to \(account.label)."
+        } catch {
+            statusMessage = "Claude Code switch failed: \(error.localizedDescription)"
+        }
+    }
+
+    private func restoreOfficialClaude() {
+        do {
+            try ClaudeCodeConfigSwitcher().restoreOfficialClaude()
+            statusMessage = "Claude Code restored to official auth."
+        } catch {
+            statusMessage = "Claude Code restore failed: \(error.localizedDescription)"
         }
     }
 

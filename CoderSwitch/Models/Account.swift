@@ -118,8 +118,10 @@ struct Account: Identifiable, Codable, Hashable, Sendable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(UUID.self, forKey: .id)
         label = try container.decode(String.self, forKey: .label)
-        provider = try container.decode(Provider.self, forKey: .provider)
+        let decodedProvider = try Self.decodeProvider(from: container)
+        provider = decodedProvider.provider
         customEndpoint = try container.decodeIfPresent(String.self, forKey: .customEndpoint)
+            ?? decodedProvider.legacyEndpoint
         externalID = try container.decodeIfPresent(String.self, forKey: .externalID)
         defaultModel = try container.decodeIfPresent(String.self, forKey: .defaultModel)
         availableModels = try container.decodeIfPresent([ProviderModel].self, forKey: .availableModels)
@@ -178,6 +180,28 @@ struct Account: Identifiable, Codable, Hashable, Sendable {
         }
         normalized.valueKind = "minimaxRemainingNormalized"
         return normalized
+    }
+
+    private static func decodeProvider(
+        from container: KeyedDecodingContainer<CodingKeys>
+    ) throws -> (provider: Provider, legacyEndpoint: String?) {
+        let rawProvider = try container.decode(String.self, forKey: .provider)
+        if let provider = Provider(rawValue: rawProvider) {
+            return (provider, nil)
+        }
+
+        switch rawProvider {
+        case "ikunCode":
+            return (.openAICompatible, "https://api.ikuncode.cc/v1")
+        case "fishXCode":
+            return (.openAICompatible, "https://api.fishxcode.com/v1")
+        default:
+            throw DecodingError.dataCorruptedError(
+                forKey: .provider,
+                in: container,
+                debugDescription: "Unsupported provider '\(rawProvider)'"
+            )
+        }
     }
 }
 

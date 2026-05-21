@@ -30,6 +30,23 @@ final class ModelRouterTests: XCTestCase {
         XCTAssertEqual(resolved?.upstreamModel, "gpt-5-mini")
     }
 
+    func testPreferredAnthropicAccountAliasUsesDefaultModel() {
+        var first = Account(label: "Default", provider: .anthropicCompatible, customEndpoint: "https://one.example")
+        first.defaultModel = "claude-3-5-haiku"
+        var second = Account(label: "Work", provider: .anthropicCompatible, customEndpoint: "https://two.example")
+        second.defaultModel = "claude-3-5-sonnet"
+        let router = ModelRouter(accounts: [first, second])
+
+        let resolved = router.resolve(
+            model: "anthropic:work",
+            compatibility: .anthropic,
+            preferredAccountID: second.id
+        )
+
+        XCTAssertEqual(resolved?.account.id, second.id)
+        XCTAssertEqual(resolved?.upstreamModel, "claude-3-5-sonnet")
+    }
+
     func testDisabledAccountsAreSkipped() {
         var disabled = Account(label: "Disabled", provider: .openAICompatible, customEndpoint: "https://off.example/v1")
         disabled.isEnabled = false
@@ -53,5 +70,21 @@ final class ModelRouterTests: XCTestCase {
         )
 
         XCTAssertNil(resolved)
+    }
+
+    func testLegacyProxyProviderAccountDecodesAsCustomOpenAIEndpoint() throws {
+        XCTAssertFalse(Provider.allCases.contains { $0.rawValue == "ikunCode" })
+        XCTAssertFalse(Provider.allCases.contains { $0.rawValue == "fishXCode" })
+
+        let account = Account(label: "Legacy", provider: .openRouter)
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(account)
+        let json = try XCTUnwrap(String(data: data, encoding: .utf8))
+        let legacyJson = json.replacingOccurrences(of: "\"provider\":\"openRouter\"", with: "\"provider\":\"ikunCode\"")
+
+        let decoded = try JSONDecoder().decode(Account.self, from: XCTUnwrap(legacyJson.data(using: .utf8)))
+
+        XCTAssertEqual(decoded.provider, .openAICompatible)
+        XCTAssertEqual(decoded.customEndpoint, "https://api.ikuncode.cc/v1")
     }
 }

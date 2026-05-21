@@ -359,7 +359,6 @@ struct AccountRow: View {
         case .miniMax: return .pink
         case .anthropic, .anthropicCompatible: return .orange
         case .openAI, .openAICompatible: return .green
-        case .ikunCode, .fishXCode: return .teal
         case .googleAntigravity: return .indigo
         }
     }
@@ -463,11 +462,18 @@ private enum ClaudeCodeLauncher {
             proxyManager.start()
         }
 
+        try ClaudeCodeConfigSwitcher().switchToCoderSwitch(
+            account: account,
+            proxyBaseURL: proxySettings.baseURL,
+            adminKey: proxySettings.adminKey
+        )
+
         let scopedToken = "\(proxySettings.adminKey):\(account.id.uuidString)"
         let script = try createLaunchScript(
             folder: folder,
             baseURL: proxySettings.baseURL,
-            authToken: scopedToken
+            authToken: scopedToken,
+            defaultModel: account.claudeCodeDefaultModel
         )
 
         do {
@@ -494,18 +500,37 @@ private enum ClaudeCodeLauncher {
     private static func createLaunchScript(
         folder: URL,
         baseURL: String,
-        authToken: String
+        authToken: String,
+        defaultModel: String?
     ) throws -> URL {
         let script = FileManager.default.temporaryDirectory
             .appendingPathComponent("coderswitch-claude-\(UUID().uuidString).zsh")
+        let modelEnvironment = defaultModel.map { model in
+            """
+            export ANTHROPIC_MODEL=\(model.shellQuotedForTerminal)
+            export ANTHROPIC_DEFAULT_HAIKU_MODEL=\(model.shellQuotedForTerminal)
+            export ANTHROPIC_DEFAULT_SONNET_MODEL=\(model.shellQuotedForTerminal)
+            export ANTHROPIC_DEFAULT_OPUS_MODEL=\(model.shellQuotedForTerminal)
+            """
+        } ?? """
+        unset ANTHROPIC_MODEL
+        unset ANTHROPIC_DEFAULT_HAIKU_MODEL
+        unset ANTHROPIC_DEFAULT_SONNET_MODEL
+        unset ANTHROPIC_DEFAULT_OPUS_MODEL
+        """
         let contents = """
         #!/bin/zsh
         unset HISTFILE
         rm -f \(script.path.shellQuotedForTerminal)
         cd \(folder.path.shellQuotedForTerminal) || exit 1
+        unset ANTHROPIC_API_KEY
+        unset ANTHROPIC_MODEL
+        unset ANTHROPIC_DEFAULT_HAIKU_MODEL
+        unset ANTHROPIC_DEFAULT_SONNET_MODEL
+        unset ANTHROPIC_DEFAULT_OPUS_MODEL
         export ANTHROPIC_BASE_URL=\(baseURL.shellQuotedForTerminal)
         export ANTHROPIC_AUTH_TOKEN=\(authToken.shellQuotedForTerminal)
-        unset ANTHROPIC_API_KEY
+        \(modelEnvironment)
         exec claude --dangerously-skip-permissions
         """
         try contents.write(to: script, atomically: true, encoding: .utf8)

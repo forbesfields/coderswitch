@@ -4,9 +4,10 @@ A local macOS menu bar app for managing AI subscriptions and API keys across mul
 
 ## Features
 
-- **Multi-provider support**: OpenRouter, MiniMax, and custom OpenAI/Anthropic-compatible endpoints
+- **Multi-provider support**: OpenAI, Anthropic, OpenRouter, MiniMax, and custom OpenAI/Anthropic-compatible endpoints
 - **Multiple accounts per provider**: Easily switch between different API keys and endpoints
-- **Local proxy**: Single proxy URL for Claude Code (`ANTHROPIC_BASE_URL`) and Codex/OpenAI (`OPENAI_BASE_URL`)
+- **Claude Code quick switch**: Point Claude Code at any Anthropic-compatible account from the menu bar
+- **Local proxy**: Single proxy URL for Claude Code (`ANTHROPIC_BASE_URL`) and OpenAI-compatible clients (`OPENAI_BASE_URL`)
 - **Responses API support**: Proxies OpenAI-compatible `/v1/responses` calls as well as chat completions
 - **Usage tracking**: Tracks token usage (input, output, cache) by day/week/month/year
 - **Request logs**: Shows recent proxy requests with status, latency, route, and token counts
@@ -76,24 +77,92 @@ OAuth client that still requires one, provide it locally with
 
 When using the proxy, specify models using the provider's routing slug:
 
-| Provider | Routing Format | Example |
-|----------|---------------|---------|
-| OpenRouter | `openrouter:label/model` | `openrouter:default/anthropic/claude-3-opus` |
-| MiniMax | `minimax:label/MiniMax-M2.7` | `minimax:default/MiniMax-M2.7` |
-| Custom | `provider:label/model` | `openai-compatible:work/gpt-4o` |
+| Provider | API shape | Routing format | Example |
+|----------|-----------|----------------|---------|
+| OpenAI | OpenAI-compatible | `openai-direct:label/model` | `openai-direct:work/gpt-4o` |
+| Anthropic | Anthropic-compatible | `anthropic-direct:label/model` | `anthropic-direct:work/claude-sonnet-4` |
+| OpenRouter | OpenAI-compatible | `openrouter:label/model` | `openrouter:default/anthropic/claude-3-opus` |
+| MiniMax | OpenAI-compatible | `minimax:label/model` | `minimax:default/MiniMax-M2.7` |
+| OpenAI-compatible (custom) | OpenAI-compatible | `openai:label/model` | `openai:work/gpt-4o` |
+| Anthropic-compatible (custom) | Anthropic-compatible | `anthropic:label/model` | `anthropic:work/claude-sonnet-4` |
 
 You can also use the account alias as the model name to use the account's default model.
+For example, if an Anthropic-compatible custom account is labeled `work` and has
+`claude-sonnet-4` selected as its default model, `anthropic:work` routes to that
+model automatically.
+
+OpenAI-compatible providers are used for `/v1/chat/completions`,
+`/v1/responses`, and other OpenAI-style `/v1/*` requests. Anthropic-compatible
+providers are used for `/v1/messages`, which is the path Claude Code uses.
+Chinese proxy services and other gateway providers should be added as either
+`OpenAI-compatible (custom)` or `Anthropic-compatible (custom)`, depending on
+which API shape their endpoint exposes.
+
+Google Antigravity and Codex OAuth accounts are managed for account switching
+and visibility, but they are not routed through the local API proxy.
+
+### Claude Code
+
+Claude Code can use CoderSwitch through the local Anthropic-compatible proxy.
+Add an `Anthropic` or `Anthropic-compatible (custom)` account, set its API key,
+and optionally choose a default model in Settings. CoderSwitch uses that default
+model when Claude Code asks for a generic Sonnet/Haiku/Opus model.
+
+The easiest path is the menu bar:
+
+1. Open CoderSwitch from the menu bar.
+2. Expand **Quick Switch**.
+3. Under **Claude Code**, click the Anthropic-compatible account to use.
+4. To go back to normal Claude Code login, click **Official Claude**.
+
+Quick Switch updates `~/.claude/settings.json` while preserving unrelated
+settings. It writes:
+
+```json
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://localhost:8484",
+    "ANTHROPIC_AUTH_TOKEN": "<admin-key>:<account-id>",
+    "API_TIMEOUT_MS": "600000"
+  }
+}
+```
+
+When the selected account has a default model, CoderSwitch also writes
+`ANTHROPIC_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`,
+`ANTHROPIC_DEFAULT_SONNET_MODEL`, and `ANTHROPIC_DEFAULT_OPUS_MODEL` to that
+model. Switching to **Official Claude** removes only the CoderSwitch-managed env
+keys.
+
+You can also launch Claude Code directly from Settings > Accounts with
+**Open Claude Code** on an Anthropic-compatible account. That starts the proxy if
+needed, asks for a project folder, writes the same Claude Code settings, and
+opens Terminal with Claude Code pointed at CoderSwitch for that account.
+
+Manual setup works too:
+
+```bash
+export ANTHROPIC_BASE_URL=http://localhost:8484
+export ANTHROPIC_AUTH_TOKEN='<admin-key>'
+claude
+```
+
+Use `<admin-key>:<account-id>` instead of just `<admin-key>` to pin Claude Code
+to one account. The account id is visible in exported CoderSwitch config files;
+the menu bar quick switch handles this automatically.
 
 ### Environment Variables
 
 **Claude Code:**
 ```bash
 export ANTHROPIC_BASE_URL=http://localhost:8484
+export ANTHROPIC_AUTH_TOKEN='<admin-key>'
 ```
 
 **Codex / OpenAI clients:**
 ```bash
 export OPENAI_BASE_URL=http://localhost:8484/v1
+export OPENAI_API_KEY='<admin-key>'
 ```
 
 ### Admin Key

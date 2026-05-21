@@ -300,9 +300,11 @@ struct ProxyServer {
         let router = ModelRouter(accounts: snap.accounts)
         let resolved: ModelRouter.Resolution
         if let preferredAccountID = auth.preferredAccountID {
-            guard let account = snap.accounts.first(where: {
-                $0.id == preferredAccountID && $0.isEnabled && $0.provider.isClaudeCodeCompatible
-            }) else {
+            guard let routed = router.resolve(
+                model: model,
+                compatibility: .anthropic,
+                preferredAccountID: preferredAccountID
+            ), routed.account.provider.isClaudeCodeCompatible else {
                 await recordFailedRequest(
                     state: state,
                     startedAt: startedAt,
@@ -314,7 +316,7 @@ struct ProxyServer {
                 )
                 throw HTTPError(.badGateway, message: "selected Claude Code account is unavailable")
             }
-            resolved = ModelRouter.Resolution(account: account, upstreamModel: model)
+            resolved = routed
         } else {
             guard let routed = router.resolve(model: model, compatibility: .anthropic) else {
                 await recordFailedRequest(

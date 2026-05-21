@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		001FB4ECA34F2E41658B919F /* ClaudeCodeConfigSwitcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58322D80D8C9082A994BF5BD /* ClaudeCodeConfigSwitcherTests.swift */; };
 		0CB3CBE18175C59C35784BEE /* CircuitBreakerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81EEFDDEAA9E3836B661F960 /* CircuitBreakerSheet.swift */; };
 		0EAEBE3B17BC9D349188F6BA /* UsageLimit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ED3FA9D122BF9091D99E187 /* UsageLimit.swift */; };
 		1269F8919996CBF77092F65F /* OAuthAccountsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D0159E8324F52BC3DA43A96 /* OAuthAccountsTab.swift */; };
@@ -46,6 +47,7 @@
 		DD3CB4A4296ED6B52EB23CB6 /* OAuthToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99946A26D70A6F1B1BE237E7 /* OAuthToken.swift */; };
 		E2748B0DA0E6CFB150910D4A /* AppContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B6C4F1FDB85D1AB6A64D29 /* AppContext.swift */; };
 		E434167283DD555683713E7D /* UsageTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9264D404AC2D98E9FA6D966E /* UsageTab.swift */; };
+		E4423422F400C455129C20F3 /* ClaudeCodeConfigSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F852D82F1A8A798F0E9C285E /* ClaudeCodeConfigSwitcher.swift */; };
 		E5FB9E9A2767938B92B3BE1A /* RequestLogRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F154BFADA0E4F8A2289123 /* RequestLogRecorder.swift */; };
 		E6BF0D8A18AFE13F961785D6 /* ConfigBackupTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E76DECD9AA749277C78C92 /* ConfigBackupTab.swift */; };
 		EFB531D260182581DDDC9ACA /* ProxySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF98CA6635C598EE6E4A8765 /* ProxySettings.swift */; };
@@ -85,6 +87,7 @@
 		4D3AE3ADA85EC86835E1FB82 /* UsageTrackingStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageTrackingStream.swift; sourceTree = "<group>"; };
 		548062CAE7C4E77753A11644 /* ProviderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderModel.swift; sourceTree = "<group>"; };
 		552007D1DE6840D60E609738 /* Provider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Provider.swift; sourceTree = "<group>"; };
+		58322D80D8C9082A994BF5BD /* ClaudeCodeConfigSwitcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeCodeConfigSwitcherTests.swift; sourceTree = "<group>"; };
 		609E7E0F96063655E2474AB6 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		62340C112C4016EE69899E79 /* StatusPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusPopover.swift; sourceTree = "<group>"; };
 		6B20D5A3A47406E28C626078 /* ProxyRequestLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyRequestLog.swift; sourceTree = "<group>"; };
@@ -119,6 +122,7 @@
 		DE26B5CB50F01B14C047F957 /* AccountStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountStore.swift; sourceTree = "<group>"; };
 		EB840FAD3941FA139CC9E702 /* AddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountView.swift; sourceTree = "<group>"; };
 		F59CEF2EC0968CCC78025016 /* AccountsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsTab.swift; sourceTree = "<group>"; };
+		F852D82F1A8A798F0E9C285E /* ClaudeCodeConfigSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeCodeConfigSwitcher.swift; sourceTree = "<group>"; };
 		FD0FE4F8E9D8D8D4773C0DE1 /* ConfigBackupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigBackupStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -164,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				DE26B5CB50F01B14C047F957 /* AccountStore.swift */,
+				F852D82F1A8A798F0E9C285E /* ClaudeCodeConfigSwitcher.swift */,
 				FD0FE4F8E9D8D8D4773C0DE1 /* ConfigBackupStore.swift */,
 				3E43B1E2E44D34F440D1B2E6 /* KeychainStore.swift */,
 				4118F3E258AFF12FCF31A760 /* OAuthCallbackHandler.swift */,
@@ -229,6 +234,7 @@
 		A8498A6608DCAFE471D5FCF7 /* CoderSwitchTests */ = {
 			isa = PBXGroup;
 			children = (
+				58322D80D8C9082A994BF5BD /* ClaudeCodeConfigSwitcherTests.swift */,
 				83CA7AF54AEFAB4C89509FB5 /* ModelRouterTests.swift */,
 				08B3F2ACE33B81CE192486B1 /* QuotaCheckTests.swift */,
 				9D6014C3CF0C3AFB6ABC3EBC /* TokenUsageParserTests.swift */,
@@ -373,6 +379,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				001FB4ECA34F2E41658B919F /* ClaudeCodeConfigSwitcherTests.swift in Sources */,
 				6D0DEC0C9E30A8D921EAE091 /* ModelRouterTests.swift in Sources */,
 				A494D1727F2B2A53EE3F980D /* QuotaCheckTests.swift in Sources */,
 				F77E2955AABCD67D798447DB /* TokenUsageParserTests.swift in Sources */,
@@ -390,6 +397,7 @@
 				CEE8DEF6256546F461ED4B41 /* AddAccountView.swift in Sources */,
 				E2748B0DA0E6CFB150910D4A /* AppContext.swift in Sources */,
 				0CB3CBE18175C59C35784BEE /* CircuitBreakerSheet.swift in Sources */,
+				E4423422F400C455129C20F3 /* ClaudeCodeConfigSwitcher.swift in Sources */,
 				D287F853C9ACE52751FF2691 /* CoderSwitchApp.swift in Sources */,
 				8F5CFF5979F78862CA4A4738 /* ConfigBackupStore.swift in Sources */,
 				E6BF0D8A18AFE13F961785D6 /* ConfigBackupTab.swift in Sources */,
