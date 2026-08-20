@@ -1,4 +1,5 @@
 import SwiftUI
+import CoderSwitchCore
 
 struct CircuitBreakerSheet: View {
     @Environment(AccountStore.self) private var store

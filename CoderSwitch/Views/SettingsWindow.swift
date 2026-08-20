@@ -1,4 +1,5 @@
 import SwiftUI
+import CoderSwitchCore
 
 struct SettingsWindow: View {
     @State private var selectedTab: Tab = .accounts
