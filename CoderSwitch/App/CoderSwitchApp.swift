@@ -38,7 +38,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             reason: "CoderSwitch menu bar utility"
         )
         NativeStatusItemController.shared.install()
-        MenuBarPlaceholderController.shared.install()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -62,116 +61,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
-// MARK: - Codex placeholder (remove after user confirms real menu bar icon works)
-
-@MainActor
-final class MenuBarPlaceholderController: NSObject {
-    static let shared = MenuBarPlaceholderController()
-
-    private var windows: [NSWindow] = []
-    private weak var context: AppContext?
-    private weak var oauthStore: OAuthStore?
-    private var popover: NSPopover?
-    private weak var highlightedButton: NSButton?
-
-    private override init() {
-        super.init()
-    }
-
-    func configure(context: AppContext, oauthStore: OAuthStore) {
-        self.context = context
-        self.oauthStore = oauthStore
-    }
-
-    func install() {
-        guard context != nil, oauthStore != nil else { return }
-        windows.forEach { $0.close() }
-        windows = NSScreen.screens.map { screen in
-            let size = NSSize(width: 46, height: 22)
-            let frame = NSRect(
-                x: max(screen.frame.minX + 24, screen.frame.maxX - 760),
-                y: screen.frame.maxY - size.height - 2,
-                width: size.width,
-                height: size.height
-            )
-
-            let button = NSButton(frame: NSRect(origin: .zero, size: size))
-            button.isBordered = false
-            button.wantsLayer = true
-            button.layer?.cornerRadius = 7
-            button.layer?.masksToBounds = true
-            button.layer?.backgroundColor = NSColor.white.withAlphaComponent(0.92).cgColor
-            button.attributedTitle = NSAttributedString(
-                string: "CS",
-                attributes: [
-                    .font: NSFont.monospacedSystemFont(ofSize: 13, weight: .bold),
-                    .foregroundColor: NSColor.systemBlue
-                ]
-            )
-            button.toolTip = "CoderSwitch (placeholder)"
-            button.setAccessibilityTitle("CoderSwitch")
-            button.setAccessibilityIdentifier("CoderSwitch.PlaceholderStatusItem")
-            button.target = self
-            button.action = #selector(togglePopover(_:))
-
-            let panel = NSPanel(
-                contentRect: frame,
-                styleMask: [.borderless, .nonactivatingPanel],
-                backing: .buffered,
-                defer: false
-            )
-            panel.contentView = button
-            panel.isOpaque = false
-            panel.backgroundColor = .clear
-            panel.hasShadow = false
-            panel.hidesOnDeactivate = false
-            panel.isReleasedWhenClosed = false
-            panel.level = .statusBar
-            panel.collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle, .fullScreenAuxiliary]
-            panel.orderFrontRegardless()
-            return panel
-        }
-    }
-
-    @objc private func togglePopover(_ sender: NSButton) {
-        guard let context, let oauthStore else { return }
-
-        if let popover, popover.isShown {
-            closePopover()
-            return
-        }
-
-        let popover = StatusPopoverPresenter.makePopover(
-            context: context,
-            oauthStore: oauthStore,
-            delegate: self,
-            openSettings: { [weak self] in
-                self?.closePopover()
-                AppShell.shared.showSettingsWindow()
-            }
-        )
-        self.popover = popover
-        highlightedButton = sender
-        sender.isHighlighted = true
-        popover.show(relativeTo: sender.bounds, of: sender, preferredEdge: .minY)
-    }
-
-    private func closePopover() {
-        popover?.close()
-        popover = nil
-        highlightedButton?.isHighlighted = false
-        highlightedButton = nil
-    }
-}
-
-extension MenuBarPlaceholderController: NSPopoverDelegate {
-    func popoverWillClose(_ notification: Notification) {
-        popover = nil
-        highlightedButton?.isHighlighted = false
-        highlightedButton = nil
-    }
-}
-
 @MainActor
 final class AppShell: NSObject {
     static let shared = AppShell()
@@ -186,7 +75,6 @@ final class AppShell: NSObject {
         self.context = context
         self.oauthStore = oauthStore
         NativeStatusItemController.shared.configure(context: context, oauthStore: oauthStore)
-        MenuBarPlaceholderController.shared.configure(context: context, oauthStore: oauthStore)
     }
 
     func showSettingsWindow() {
