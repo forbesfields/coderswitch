@@ -1,4 +1,5 @@
 import SwiftUI
+import CoderSwitchCore
 import AppKit
 import UniformTypeIdentifiers
 

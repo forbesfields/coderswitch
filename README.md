@@ -13,7 +13,7 @@ A local macOS menu bar app for managing AI subscriptions and API keys across mul
 - **Claude Code quick switch**: Point Claude Code at any Anthropic-compatible account from the menu bar
 - **Local proxy**: Single proxy URL for Claude Code (`ANTHROPIC_BASE_URL`) and OpenAI-compatible clients (`OPENAI_BASE_URL`)
 - **Responses API support**: Proxies OpenAI-compatible `/v1/responses` calls as well as chat completions
-- **Usage tracking**: Tracks token usage (input, output, cache) by day/week/month/year
+- **Usage tracking**: Tracks request-log token usage across coding tools for today, last 24h, last 7d, last 30d, YTD, and all time
 - **Request logs**: Shows recent proxy requests with status, latency, route, and token counts
 - **Quota monitoring**: Polls provider APIs for balance and request limits
 - **Secure storage**: API keys and OAuth tokens encrypted in local SQLite storage
@@ -86,7 +86,10 @@ When using the proxy, specify models using the provider's routing slug:
 | OpenAI | OpenAI-compatible | `openai-direct:label/model` | `openai-direct:work/gpt-4o` |
 | Anthropic | Anthropic-compatible | `anthropic-direct:label/model` | `anthropic-direct:work/claude-sonnet-4` |
 | OpenRouter | OpenAI-compatible | `openrouter:label/model` | `openrouter:default/anthropic/claude-3-opus` |
-| MiniMax | OpenAI-compatible | `minimax:label/model` | `minimax:default/MiniMax-M2.7` |
+| MiniMax | Anthropic-compatible | `minimax:label/model` | `minimax:default/MiniMax-M2.7` |
+| GLM Coding Plan (Z.AI) | Anthropic-compatible | `glm:label/model` | `glm:default/glm-4.7` |
+| Kimi Coding Plan | Anthropic-compatible | `kimi:label/model` | `kimi:default/kimi-k2.5` |
+| Qwen Coding Plan (Alibaba Cloud) | Anthropic-compatible | `qwen:label/model` | `qwen:default/qwen3-coder-plus` |
 | OpenAI-compatible (custom) | OpenAI-compatible | `openai:label/model` | `openai:work/gpt-4o` |
 | Anthropic-compatible (custom) | Anthropic-compatible | `anthropic:label/model` | `anthropic:work/claude-sonnet-4` |
 
@@ -107,10 +110,13 @@ and visibility, but they are not routed through the local API proxy.
 
 ### Claude Code
 
-Claude Code can use CoderSwitch through the local Anthropic-compatible proxy.
-Add an `Anthropic` or `Anthropic-compatible (custom)` account, set its API key,
-and optionally choose a default model in Settings. CoderSwitch uses that default
-model when Claude Code asks for a generic Sonnet/Haiku/Opus model.
+Claude Code can use CoderSwitch-managed Anthropic-compatible accounts directly,
+or through the local Anthropic-compatible proxy for manual routing. Add an
+`Anthropic`, `MiniMax`, `GLM Coding Plan`, `Kimi Coding Plan`,
+`Qwen Coding Plan`, or `Anthropic-compatible (custom)` account, set its API key,
+and optionally choose default Claude Code model mappings in Settings. Built-in
+coding-plan providers include their Anthropic-compatible endpoint and a default
+model so they can be used immediately after adding a key.
 
 The easiest path is the menu bar:
 
@@ -125,28 +131,31 @@ settings. It writes:
 ```json
 {
   "env": {
-    "ANTHROPIC_BASE_URL": "http://localhost:8484",
-    "ANTHROPIC_AUTH_TOKEN": "<admin-key>:<account-id>",
+    "ANTHROPIC_BASE_URL": "https://provider.example.com",
+    "ANTHROPIC_API_KEY": "<account-api-key>",
     "API_TIMEOUT_MS": "600000"
   }
 }
 ```
 
-When the selected account has a default model, CoderSwitch also writes
-`ANTHROPIC_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`,
-`ANTHROPIC_DEFAULT_SONNET_MODEL`, and `ANTHROPIC_DEFAULT_OPUS_MODEL` to that
-model. Switching to **Official Claude** removes only the CoderSwitch-managed env
-keys.
+When the selected account has a default model, CoderSwitch writes the Claude
+Code model-family env vars. The account editor can map Opus, Sonnet, and Haiku
+separately via `ANTHROPIC_DEFAULT_OPUS_MODEL`,
+`ANTHROPIC_DEFAULT_SONNET_MODEL`, and `ANTHROPIC_DEFAULT_HAIKU_MODEL`.
+Switching to **Official Claude** removes only the CoderSwitch-managed env keys.
 
 You can also launch Claude Code directly from Settings > Accounts with
-**Open Claude Code** on an Anthropic-compatible account. That starts the proxy if
-needed, asks for a project folder, writes the same Claude Code settings, and
-opens Terminal with Claude Code pointed at CoderSwitch for that account.
+**Open Claude Code** on an Anthropic-compatible account. That asks for a project
+folder, writes an isolated temp Claude Code settings file, and opens Terminal
+with Claude Code pointed directly at that account's Anthropic-compatible
+endpoint and stored API key. The local proxy is still available for manual
+routing and request logging, but the button does not route direct API-key
+accounts through the proxy.
 
 Manual setup works too:
 
 ```bash
-export ANTHROPIC_BASE_URL=http://localhost:8484
+export ANTHROPIC_BASE_URL=http://localhost:8484/claude
 export ANTHROPIC_AUTH_TOKEN='<admin-key>'
 claude
 ```
@@ -159,13 +168,13 @@ the menu bar quick switch handles this automatically.
 
 **Claude Code:**
 ```bash
-export ANTHROPIC_BASE_URL=http://localhost:8484
+export ANTHROPIC_BASE_URL=http://localhost:8484/claude
 export ANTHROPIC_AUTH_TOKEN='<admin-key>'
 ```
 
 **Codex / OpenAI clients:**
 ```bash
-export OPENAI_BASE_URL=http://localhost:8484/v1
+export OPENAI_BASE_URL=http://localhost:8484/codex/v1
 export OPENAI_API_KEY='<admin-key>'
 ```
 

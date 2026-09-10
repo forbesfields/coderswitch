@@ -1,12 +1,14 @@
 import SwiftUI
+import CoderSwitchCore
 
 struct StatusPopover: View {
+    var openSettings: (() -> Void)?
+
     @Environment(AccountStore.self) private var store
     @Environment(OAuthStore.self) private var oauthStore
     @Environment(ProxySettings.self) private var settings
     @Environment(ProxyManager.self) private var proxy
     @Environment(QuotaPoller.self) private var poller
-    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -52,11 +54,12 @@ struct StatusPopover: View {
             Divider()
 
             Button("Settings…") {
-                openWindow(id: "settings")
+                openSettings?()
             }
             .keyboardShortcut(",")
 
             Button("Quit") {
+                AppTerminationController.shared.allowTermination()
                 NSApplication.shared.terminate(nil)
             }
             .keyboardShortcut("q")
@@ -70,6 +73,7 @@ private struct OAuthQuickSwitch: View {
     @Environment(AccountStore.self) private var accountStore
     @Environment(OAuthStore.self) private var oauthStore
     @Environment(ProxySettings.self) private var settings
+    @Environment(ProxyManager.self) private var proxyManager
     @State private var isExpanded = false
     @State private var statusMessage: String?
 
@@ -109,7 +113,7 @@ private struct OAuthQuickSwitch: View {
                             }
                         }
                         .buttonStyle(.borderless)
-                        .disabled(!account.isEnabled || settings.adminKey.isEmpty)
+                        .disabled(!account.isEnabled)
                     }
 
                     Button {
@@ -159,15 +163,19 @@ private struct OAuthQuickSwitch: View {
     }
 
     private func switchClaudeCode(to account: Account) {
+        statusMessage = nil
         do {
-            try ClaudeCodeConfigSwitcher().switchToCoderSwitch(
+            try ClaudeCodeLauncher.open(
                 account: account,
-                proxyBaseURL: settings.baseURL,
-                adminKey: settings.adminKey
+                apiKey: accountStore.apiKey(for: account),
+                proxySettings: settings,
+                proxyManager: proxyManager
             )
-            statusMessage = "Claude Code switched to \(account.label)."
+            statusMessage = "Claude Code opened with \(account.label)."
+        } catch ClaudeCodeLaunchError.cancelled {
+            return
         } catch {
-            statusMessage = "Claude Code switch failed: \(error.localizedDescription)"
+            statusMessage = "Claude Code launch failed: \(error.localizedDescription)"
         }
     }
 
@@ -213,7 +221,7 @@ private struct AccountUsageRow: View {
                     .font(.caption2)
                     .foregroundStyle(.orange)
             } else if account.usageLimits.isEmpty {
-                if account.provider.quotaCheck == nil && account.provider.isProxyRoutable {
+                if !account.provider.supportsUsagePolling && account.provider.isProxyRoutable {
                     Text("No quota endpoint")
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
@@ -236,10 +244,10 @@ private struct AccountUsageRow: View {
                     UsageLimitBar(limit: limit)
                 }
             }
-            let today = account.tokenUsageTotal(period: .day)
+            let today = account.tokenUsageTotal(period: .today)
             let allTime = account.tokenUsageTotal(period: .allTime)
             if !allTime.isEmpty {
-                Text("Tokens today \(formatTokens(today.totalTokens)) • all \(formatTokens(allTime.totalTokens))")
+                Text("Tokens today \(formatTokens(today.processedTokens)) • all \(formatTokens(allTime.processedTokens))")
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
@@ -267,6 +275,11 @@ private struct UsageLimitBar: View {
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
+            }
+            if let resetAt = limit.resetAt {
+                Text("Resets \(resetAt, style: .relative)")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.tertiary)
             }
             if let fraction = limit.fraction {
                 ProgressView(value: fraction)

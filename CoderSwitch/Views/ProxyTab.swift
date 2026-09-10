@@ -1,4 +1,5 @@
 import SwiftUI
+import CoderSwitchCore
 
 struct ProxyTab: View {
     @Environment(ProxySettings.self) private var settings
@@ -104,12 +105,12 @@ struct ProxyTab: View {
             Section("Usage") {
                 Text("Point Claude Code at this proxy:")
                     .font(.caption)
-                Text("ANTHROPIC_BASE_URL=\(settings.baseURL)")
+                Text("ANTHROPIC_BASE_URL=\(settings.baseURL)/claude")
                     .font(.system(.caption, design: .monospaced))
                     .textSelection(.enabled)
                 Text("Point Codex / OpenAI clients at this proxy:")
                     .font(.caption)
-                Text("OPENAI_BASE_URL=\(settings.baseURL)/v1")
+                Text("OPENAI_BASE_URL=\(settings.baseURL)/codex/v1")
                     .font(.system(.caption, design: .monospaced))
                     .textSelection(.enabled)
             }
@@ -206,6 +207,9 @@ private struct RequestLogRow: View {
                 Text(log.method)
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(.secondary)
+                Text(log.codingTool.displayName)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
                 Text(log.path)
                     .font(.caption)
                     .lineLimit(1)
@@ -224,7 +228,7 @@ private struct RequestLogRow: View {
                     .lineLimit(1)
                 Spacer()
                 if !log.usage.isEmpty {
-                    Text("\(formatLogTokens(log.usage.totalTokens)) tokens")
+                    Text("\(formatLogTokens(log.usage.processedTokens)) tokens")
                         .font(.system(.caption2, design: .monospaced))
                         .foregroundStyle(.secondary)
                 }
