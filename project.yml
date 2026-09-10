@@ -37,8 +37,6 @@ targets:
         LSMinimumSystemVersion: "14.0"
         LSUIElement: true
         NSHumanReadableCopyright: "© 2026 f9Labs"
-        NSAppTransportSecurity:
-          NSAllowsArbitraryLoads: true
     entitlements:
       path: CoderSwitch/CoderSwitch.entitlements
       properties:

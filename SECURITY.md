@@ -31,11 +31,14 @@ GitHub before publishing details. Include:
   `.coderswitchconfig` exports.
 - API keys and OAuth tokens are encrypted in CoderSwitch's local SQLite
   database with CryptoKit `SecretBox`.
-- The current `SecretBox` root key is stored as a mode-0600 file in
-  `~/Library/Application Support/CoderSwitch/.master.key`. This protects
-  against casual database inspection, but it is not equivalent to Keychain
-  protection against same-user malware, broad filesystem access, or copied
-  backups.
+- The `SecretBox` root key is stored in the macOS Keychain
+  (`kSecAttrAccessibleWhenUnlockedThisDeviceOnly`). Installations that still
+  have a legacy `.master.key` file in `~/Library/Application Support/CoderSwitch/`
+  migrate it into the Keychain on first launch; the file is deleted only after
+  the Keychain write is verified.
+- The proxy admin key is stored in the macOS Keychain, not in SQLite. It is
+  imported from older plaintext databases on first launch, after which the
+  database column is scrubbed.
 - Config backup files (`*.coderswitchconfig`) contain decrypted API keys,
   OAuth tokens, proxy settings, and the proxy admin key. Keep them private and
   delete them when no longer needed.
@@ -60,17 +63,29 @@ reserved for explicit local development endpoints such as `localhost` or
 
 ## Known Hardening Items
 
-Before broad distribution, the highest-value hardening work is:
+Done:
 
-- Move the `SecretBox` root key from `.master.key` into macOS Keychain and
-  migrate existing users safely.
-- Add OAuth `state` generation and validation.
-- Restrict the OAuth callback listener and reject unexpected callback paths.
-- Remove global App Transport Security arbitrary loads and validate custom
-  endpoints before saving them.
-- Move the proxy admin key out of plaintext SQLite storage.
+- The `SecretBox` root key lives in the macOS Keychain; legacy `.master.key`
+  files are migrated and deleted automatically.
+- OAuth authorization requests carry a random `state` that is validated on the
+  callback before any code is used.
+- The OAuth callback listener binds to `127.0.0.1` only, drops non-loopback
+  connections, and rejects requests whose path or `state` does not match the
+  pending flow.
+- Global App Transport Security arbitrary loads are removed; custom provider
+  endpoints must be `https://` (or loopback `http://`) and must not embed
+  credentials.
+- The proxy admin key is stored in the Keychain instead of plaintext SQLite.
+
+Still open:
+
+- Rotate/remove the committed Google OAuth client secret if it is a real
+  confidential-client value (see the security audit's H-4 finding).
 - Decide whether the app should be sandboxed for public distribution, and
   document any intentional exceptions.
+- Consider rotating the SecretBox root key (and stored credentials) if any
+  real credentials were stored before the Keychain migration landed, since
+  older app-support directories may already have been copied or backed up.
 
 ## Dependency and Release Checks
 
