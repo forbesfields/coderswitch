@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0A1A24DE4F63351666D9BFB9 /* CoderSwitchCore in Frameworks */ = {isa = PBXBuildFile; productRef = E9F08192807B27FBBC655A2C /* CoderSwitchCore */; };
 		0CB3CBE18175C59C35784BEE /* CircuitBreakerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81EEFDDEAA9E3836B661F960 /* CircuitBreakerSheet.swift */; };
 		1269F8919996CBF77092F65F /* OAuthAccountsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D0159E8324F52BC3DA43A96 /* OAuthAccountsTab.swift */; };
 		1F3AC856E3F556F5EB4ED7CA /* SettingsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077657DD1B7A7572435EA49B /* SettingsWindow.swift */; };
@@ -25,20 +24,9 @@
 		FC28A6387C5E9E6432DA0DBD /* CoderSwitchCore in Frameworks */ = {isa = PBXBuildFile; productRef = D5EF4664EB583758F50084CF /* CoderSwitchCore */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		E63F2BD4F3AA01D3A359A11D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 79392A173CCDDC285E19D689 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = FF1BA4337E2A71814E45246C;
-			remoteInfo = CoderSwitch;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		05E76DECD9AA749277C78C92 /* ConfigBackupTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigBackupTab.swift; sourceTree = "<group>"; };
 		077657DD1B7A7572435EA49B /* SettingsWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindow.swift; sourceTree = "<group>"; };
-		0A4A609601CBE498535B10BA /* CoderSwitchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoderSwitchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A69F65CBBB5CF90360D68B5 /* ProxyTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyTab.swift; sourceTree = "<group>"; };
 		28B6C4F1FDB85D1AB6A64D29 /* AppContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContext.swift; sourceTree = "<group>"; };
 		609E7E0F96063655E2474AB6 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
@@ -61,14 +49,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC28A6387C5E9E6432DA0DBD /* CoderSwitchCore in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9854394B882D96A71183942D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0A1A24DE4F63351666D9BFB9 /* CoderSwitchCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,18 +90,10 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		A8498A6608DCAFE471D5FCF7 /* CoderSwitchTests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = CoderSwitchTests;
-			sourceTree = "<group>";
-		};
 		D5204D67A72BCE3450983FA4 = {
 			isa = PBXGroup;
 			children = (
 				04F3A484ABDC997974F7466F /* CoderSwitch */,
-				A8498A6608DCAFE471D5FCF7 /* CoderSwitchTests */,
 				A02E24105105752D05F5A2EA /* Packages */,
 				E79CDDCA2E87A9CA3838F98D /* Products */,
 			);
@@ -131,7 +103,6 @@
 			isa = PBXGroup;
 			children = (
 				BE37B8CEB84B2D78AD85DE4D /* CoderSwitch.app */,
-				0A4A609601CBE498535B10BA /* CoderSwitchTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -157,26 +128,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		52906322270CCF07335E21A6 /* CoderSwitchTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8496620BB0A193C9BBA4BB74 /* Build configuration list for PBXNativeTarget "CoderSwitchTests" */;
-			buildPhases = (
-				28F3842FAACEE66E5BAE3C49 /* Sources */,
-				9854394B882D96A71183942D /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				FA8CDCE7C97303149B6E5C71 /* PBXTargetDependency */,
-			);
-			name = CoderSwitchTests;
-			packageProductDependencies = (
-				E9F08192807B27FBBC655A2C /* CoderSwitchCore */,
-			);
-			productName = CoderSwitchTests;
-			productReference = 0A4A609601CBE498535B10BA /* CoderSwitchTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		FF1BA4337E2A71814E45246C /* CoderSwitch */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 540C7A614E73125F5F338125 /* Build configuration list for PBXNativeTarget "CoderSwitch" */;
@@ -206,10 +157,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
-					52906322270CCF07335E21A6 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
-					};
 					FF1BA4337E2A71814E45246C = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
@@ -234,7 +181,6 @@
 			projectRoot = "";
 			targets = (
 				FF1BA4337E2A71814E45246C /* CoderSwitch */,
-				52906322270CCF07335E21A6 /* CoderSwitchTests */,
 			);
 		};
 /* End PBXProject section */
@@ -251,13 +197,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		28F3842FAACEE66E5BAE3C49 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D2A6AC597678CB76FD250B01 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -280,32 +219,7 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		FA8CDCE7C97303149B6E5C71 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = FF1BA4337E2A71814E45246C /* CoderSwitch */;
-			targetProxy = E63F2BD4F3AA01D3A359A11D /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		16635933F1BC7B5BECFF3FFA /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMBINE_HIDPI_IMAGES = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = dev.forbes.CoderSwitchTests;
-				SDKROOT = macosx;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CoderSwitch.app/Contents/MacOS/CoderSwitch";
-			};
-			name = Debug;
-		};
 		47944FC8B336C5D4C0026B1B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -402,23 +316,6 @@
 			};
 			name = Release;
 		};
-		8E80C1E4869E73ECD90571A1 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMBINE_HIDPI_IMAGES = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = dev.forbes.CoderSwitchTests;
-				SDKROOT = macosx;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CoderSwitch.app/Contents/MacOS/CoderSwitch";
-			};
-			name = Release;
-		};
 		F4C32FBE631FCBB65EC832E0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -507,15 +404,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		8496620BB0A193C9BBA4BB74 /* Build configuration list for PBXNativeTarget "CoderSwitchTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				16635933F1BC7B5BECFF3FFA /* Debug */,
-				8E80C1E4869E73ECD90571A1 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
@@ -527,10 +415,6 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		D5EF4664EB583758F50084CF /* CoderSwitchCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CoderSwitchCore;
-		};
-		E9F08192807B27FBBC655A2C /* CoderSwitchCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CoderSwitchCore;
 		};
