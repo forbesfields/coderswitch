@@ -40,6 +40,15 @@ Or build from command line:
 xcodebuild -scheme CoderSwitch -configuration Debug build
 ```
 
+The project signs with the maintainer's Apple Development team, so the
+Keychain trusts every rebuild. Without that certificate, build ad-hoc:
+
+```bash
+xcodebuild -scheme CoderSwitch -configuration Debug build DEVELOPMENT_TEAM= CODE_SIGN_IDENTITY=-
+```
+
+Ad-hoc builds ask for Keychain access again after each rebuild.
+
 ## Configuration
 
 ### Adding Accounts

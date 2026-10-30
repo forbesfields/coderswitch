@@ -9,7 +9,10 @@ settings:
   base:
     SWIFT_VERSION: "6.0"
     MACOSX_DEPLOYMENT_TARGET: "14.0"
-    DEVELOPMENT_TEAM: ""
+    # A stable signing identity keeps the Keychain's "Always Allow" valid across
+    # rebuilds. Ad-hoc builds change identity every build and re-prompt.
+    DEVELOPMENT_TEAM: V3433WKX82
+    CODE_SIGN_IDENTITY: Apple Development
     CODE_SIGN_STYLE: Automatic
     SWIFT_STRICT_CONCURRENCY: complete
     ENABLE_USER_SCRIPT_SANDBOXING: NO
