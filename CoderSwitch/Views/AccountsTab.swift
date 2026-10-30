@@ -359,7 +359,7 @@ struct AccountRow: View {
             isPresented: $confirmingDelete,
             titleVisibility: .visible
         ) {
-            Button("Delete", role: .destructive) { store.delete(account) }
+            Button("Delete", role: .destructive) { deleteAccount() }
             Button("Cancel", role: .cancel) {}
         }
         .sheet(isPresented: $showingBreaker) {
@@ -373,6 +373,20 @@ struct AccountRow: View {
     }
 
     private var providerColor: Color { account.provider.tintColor }
+
+    /// Codex and Antigravity cards are rebuilt from their stored sign-in at launch, so deleting
+    /// the card also deletes that sign-in (and, for Codex, stops the ~/.codex re-import).
+    private func deleteAccount() {
+        let linkedSignIn = switch account.provider {
+        case .codex: oauthStore.codexAccount(matching: account)
+        case .googleAntigravity: oauthStore.geminiAccount(matching: account)
+        default: nil as OAuthAccount?
+        }
+        if let linkedSignIn {
+            oauthStore.delete(linkedSignIn)
+        }
+        store.delete(account)
+    }
 
     private var codexAuthSource: OAuthAccountAuthSource? {
         guard account.provider == .codex else { return nil }
