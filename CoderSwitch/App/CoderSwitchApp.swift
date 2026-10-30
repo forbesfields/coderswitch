@@ -70,6 +70,7 @@ final class AppShell: NSObject {
     private var settingsWindow: NSWindow?
     private var addAccountWindow: NSWindow?
     private var loginWindows: [UUID: WebLoginWindowController] = [:]
+    private var windowCloseObserver: NSObjectProtocol?
 
     private override init() {}
 
@@ -77,6 +78,12 @@ final class AppShell: NSObject {
         self.context = context
         self.oauthStore = oauthStore
         NativeStatusItemController.shared.configure(context: context, oauthStore: oauthStore)
+        // The task runs after the close finishes, so the closing window no longer counts as visible.
+        windowCloseObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in self?.returnToMenuBarIfNoWindows() }
+        }
     }
 
     func showSettingsWindow() {
@@ -149,6 +156,16 @@ final class AppShell: NSObject {
         window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
+
+    /// A regular app cannot show its popover over another app's full-screen Space, so macOS
+    /// shows it on the desktop instead. Go back to a menu bar only app when the last window closes.
+    private func returnToMenuBarIfNoWindows() {
+        let hasOpenWindow = settingsWindow?.isVisible == true
+            || addAccountWindow?.isVisible == true
+            || loginWindows.values.contains { $0.window?.isVisible == true }
+        guard !hasOpenWindow, NSApp.activationPolicy() != .accessory else { return }
+        NSApp.setActivationPolicy(.accessory)
+    }
 }
 
 @MainActor
@@ -163,6 +180,7 @@ final class NativeStatusItemController: NSObject {
     private var lastMeterState: MenuBarMeterState?
     private var defaultsObserver: NSObjectProtocol?
     private var appearanceObservation: NSKeyValueObservation?
+    private var outsideClickMonitor: Any?
 
     private override init() {
         super.init()
@@ -279,21 +297,41 @@ final class NativeStatusItemController: NSObject {
         highlightedButton = sender
         sender.isHighlighted = true
         popover.show(relativeTo: sender.bounds, of: sender, preferredEdge: .minY)
+        // Show on the current Space, also over another app's full-screen window.
+        popover.contentViewController?.view.window?.collectionBehavior.formUnion([.canJoinAllSpaces, .fullScreenAuxiliary])
+        startOutsideClickMonitor()
+    }
+
+    /// The app is not active while the popover is open, so `.transient` does not see clicks
+    /// in other apps. A global monitor gets only those clicks; clicks on the status item stay local.
+    private func startOutsideClickMonitor() {
+        guard outsideClickMonitor == nil else { return }
+        outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(
+            matching: [.leftMouseDown, .rightMouseDown, .otherMouseDown]
+        ) { [weak self] _ in
+            Task { @MainActor in self?.closePopover() }
+        }
     }
 
     private func closePopover() {
         popover?.close()
+        popoverDidDismiss()
+    }
+
+    private func popoverDidDismiss() {
         popover = nil
         highlightedButton?.isHighlighted = false
         highlightedButton = nil
+        if let outsideClickMonitor {
+            NSEvent.removeMonitor(outsideClickMonitor)
+            self.outsideClickMonitor = nil
+        }
     }
 }
 
 extension NativeStatusItemController: NSPopoverDelegate {
     func popoverWillClose(_ notification: Notification) {
-        popover = nil
-        highlightedButton?.isHighlighted = false
-        highlightedButton = nil
+        popoverDidDismiss()
     }
 }
 
