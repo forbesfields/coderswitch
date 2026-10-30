@@ -26,7 +26,7 @@ struct OAuthAccountsTab: View {
 
                 if store.accounts.isEmpty {
                     ContentUnavailableView(
-                        "No OAuth accounts",
+                        "No sign-ins",
                         systemImage: "person.crop.circle.badge.plus",
                         description: Text("Connect your Codex or Gemini account to get started.")
                     )
@@ -52,7 +52,7 @@ struct OAuthAccountsTab: View {
                     }
                 }
             }
-            .navigationTitle("OAuth Accounts")
+            .navigationTitle("Sign-ins")
             .toolbar {
                 ToolbarItem {
                     Menu {

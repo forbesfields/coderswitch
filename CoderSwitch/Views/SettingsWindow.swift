@@ -2,18 +2,21 @@ import SwiftUI
 import CoderSwitchCore
 
 struct SettingsWindow: View {
-    @State private var selectedTab: Tab = .accounts
+    @State private var selectedTab: Tab = .general
 
-    enum Tab: Hashable { case accounts, proxy, usage, oauth, backup }
+    enum Tab: Hashable { case general, accounts, signIns, proxy, usage, backup }
 
     var body: some View {
         TabView(selection: $selectedTab) {
+            GeneralTab()
+                .tabItem { Label("General", systemImage: "gearshape") }
+                .tag(Tab.general)
             AccountsTab()
                 .tabItem { Label("Accounts", systemImage: "person.crop.circle") }
                 .tag(Tab.accounts)
             OAuthAccountsTab()
-                .tabItem { Label("OAuth", systemImage: "person.badge.key.fill") }
-                .tag(Tab.oauth)
+                .tabItem { Label("Sign-ins", systemImage: "person.badge.key.fill") }
+                .tag(Tab.signIns)
             ProxyTab()
                 .tabItem { Label("Proxy", systemImage: "network") }
                 .tag(Tab.proxy)

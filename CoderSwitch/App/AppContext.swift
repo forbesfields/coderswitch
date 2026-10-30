@@ -1,6 +1,7 @@
 import Foundation
 import CoderSwitchCore
 import Observation
+import SwiftUI
 
 /// Top-level container created exactly once at app launch. Owns the
 /// account store, proxy settings, the proxy manager, and the quota
@@ -30,6 +31,8 @@ final class AppContext {
         accountStore.syncGoogleAntigravityAccounts(from: oauthStore.accounts(for: .gemini))
         proxyManager.bind(accountStore: accountStore, settings: proxySettings, requestLogStore: requestLogStore)
         quotaPoller.bind(store: accountStore, oauthStore: oauthStore)
+        UsagePreferences.registerDefaults()
+        quotaPoller.interval = UsagePreferences.refreshInterval()
         guard !Self.isRunningTests else { return }
         if proxySettings.autoStart {
             proxyManager.start()
@@ -39,5 +42,17 @@ final class AppContext {
 
     private static var isRunningTests: Bool {
         ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+    }
+}
+
+extension View {
+    /// Injects every service the app's views read from the environment.
+    func appEnvironment(_ context: AppContext, oauthStore: OAuthStore) -> some View {
+        environment(context.accountStore)
+            .environment(context.proxySettings)
+            .environment(context.proxyManager)
+            .environment(context.quotaPoller)
+            .environment(context.requestLogStore)
+            .environment(oauthStore)
     }
 }

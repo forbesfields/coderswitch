@@ -6,6 +6,8 @@ struct OAuthFlowView: View {
     @Binding var isAuthenticating: Bool
     @Binding var authError: String?
     let onComplete: () -> Void
+    /// Replaces `dismiss` when the view is not shown as a sheet.
+    var onCancel: (() -> Void)?
 
     @Environment(OAuthStore.self) private var store
     @Environment(\.dismiss) private var dismiss
@@ -48,7 +50,7 @@ struct OAuthFlowView: View {
             HStack(spacing: 12) {
                 Button("Cancel") {
                     cancel()
-                    dismiss()
+                    if let onCancel { onCancel() } else { dismiss() }
                 }
                 .keyboardShortcut(.cancelAction)
 
