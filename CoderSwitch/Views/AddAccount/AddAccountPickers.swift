@@ -13,7 +13,7 @@ struct ProviderPickerList: View {
 
     private let groups = [
         Group(title: "Subscriptions", providers: [.claude, .codex, .commandCode, .opencodeGo, .googleAntigravity]),
-        Group(title: "API keys", providers: [.openRouter, .miniMax, .glmCodingPlan, .kimiCodingPlan, .qwenCodingPlan, .openAI, .anthropic]),
+        Group(title: "API keys", providers: [.openRouter, .refuseless, .miniMax, .glmCodingPlan, .kimiCodingPlan, .qwenCodingPlan, .openAI, .anthropic]),
         Group(title: "Custom", providers: [.customWeb, .openAICompatible, .anthropicCompatible]),
     ]
 
@@ -56,6 +56,7 @@ private extension Provider {
         case .claude: "Track Claude Pro or Max session and weekly usage"
         case .codex: "Track usage and switch the Codex CLI account"
         case .commandCode: "Track Command Code usage"
+        case .refuseless: "Abliterated open models, dollar balance"
         case .opencodeGo: "API key for routing, web sign-in for usage"
         case .googleAntigravity: "Track Google model quotas"
         case .customWeb: "Any site that shows usage as JSON after sign-in"

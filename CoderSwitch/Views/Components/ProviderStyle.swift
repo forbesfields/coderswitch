@@ -6,6 +6,7 @@ extension Provider {
         switch self {
         case .codex: .blue
         case .openRouter: .purple
+        case .refuseless: .red
         case .opencodeGo: .teal
         case .miniMax, .glmCodingPlan: .pink
         case .anthropic, .anthropicCompatible, .kimiCodingPlan, .qwenCodingPlan: .orange
@@ -23,6 +24,7 @@ extension Provider {
         case .openAI: "sparkle"
         case .anthropic, .anthropicCompatible: "a.circle"
         case .openRouter: "arrow.triangle.branch"
+        case .refuseless: "infinity"
         case .opencodeGo: "curlybraces"
         case .miniMax: "waveform"
         case .glmCodingPlan: "z.square"
