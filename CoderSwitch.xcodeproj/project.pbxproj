@@ -10,18 +10,40 @@
 		0A1A24DE4F63351666D9BFB9 /* CoderSwitchCore in Frameworks */ = {isa = PBXBuildFile; productRef = E9F08192807B27FBBC655A2C /* CoderSwitchCore */; };
 		0CB3CBE18175C59C35784BEE /* CircuitBreakerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81EEFDDEAA9E3836B661F960 /* CircuitBreakerSheet.swift */; };
 		1269F8919996CBF77092F65F /* OAuthAccountsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D0159E8324F52BC3DA43A96 /* OAuthAccountsTab.swift */; };
+		14D33C021D38431A544E45AF /* FlowActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71B2F90ADC71D334DC44BE5F /* FlowActionBar.swift */; };
+		1AC6BA60AFEB315D5B4F2425 /* PopoverScaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19347C8CEE9AC54EE5A55E2D /* PopoverScaffold.swift */; };
 		1F3AC856E3F556F5EB4ED7CA /* SettingsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077657DD1B7A7572435EA49B /* SettingsWindow.swift */; };
+		26481F06E643C9E41F7B4375 /* APIKeyAccountForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7651BF40198C654A6CF979 /* APIKeyAccountForm.swift */; };
+		2CBB6D88253FEEAF654E9A05 /* AccountUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2215DDDCAC133307568B4453 /* AccountUsage.swift */; };
+		2D013DB0F0199F020C64441D /* PopoverChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA469F9B3AC99C4BD81B0CB2 /* PopoverChrome.swift */; };
+		34439D687CA6FAEA9979759B /* UsageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BBE78270AA24A63EC69722D /* UsageBar.swift */; };
 		391465E29C96654587A6BA38 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F4AEA0DF138EB072B739E5C /* Assets.xcassets */; };
+		4B1892751519B031DDE886AB /* UsageSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 612B9A476E804DD7FFA1CCE8 /* UsageSection.swift */; };
+		4E5501822B98A1D11C779849 /* WebLoginModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFC37A1BCFF0B9EC4C504B9 /* WebLoginModel.swift */; };
+		50371D4BEDE2190053445EC5 /* SourceAccountForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A5E3FF2C798AD10ED32F0B /* SourceAccountForm.swift */; };
+		58F8EE7C4A3B6359B56A26C0 /* AddAccountPickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C1F43A27376B55657817423 /* AddAccountPickers.swift */; };
+		5F0F1C0284C5EC9A4DBC2CFE /* AddAccountFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C175502DFA4E14E4734CA8A /* AddAccountFlow.swift */; };
+		5F6BC6B4B3353ED6961DC0EF /* SwitchProxySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64E4F1094AD67C559E3CC249 /* SwitchProxySection.swift */; };
 		667E3E3F1DE6E16BBE3E9E81 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609E7E0F96063655E2474AB6 /* AboutView.swift */; };
+		7365437C25D53028B580079D /* ProviderStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABA93B759BDB2930EC2A86F /* ProviderStyle.swift */; };
 		73E066C3AA5A60AB99B0E1F6 /* OAuthFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD9D6312AC2958382BCF570 /* OAuthFlowView.swift */; };
+		779C50ADB14E7309463F1F5B /* WebLoginWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7BABBD4BE3A6B9C16EB1E9 /* WebLoginWindowController.swift */; };
+		7F63C4B6534ABD3455813C37 /* SwitchProxyPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F670A784AA1823D86521362 /* SwitchProxyPanel.swift */; };
+		952E8A8B7016B94A271DDE68 /* StatusPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = A822A0BE8A16016B78BE2F93 /* StatusPopover.swift */; };
 		964EE21AB5A195100E8158FE /* AccountsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59CEF2EC0968CCC78025016 /* AccountsTab.swift */; };
+		96F27BF9163DE4EF2AC758AE /* CardStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CDDF219D3A1806F6B18A164 /* CardStyle.swift */; };
+		9CE4FB706FDF27A195410C5C /* GeneralTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D34683775EE524E88CEE29F /* GeneralTab.swift */; };
+		9E56EA154A8E9A92EEF0A655 /* AccountUsageCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F54D17AC58A8524E4DFA6E /* AccountUsageCard.swift */; };
+		B6E10A48BF70F088E6E852A1 /* UsagePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AD2CDC85FE89EA1F01E39A /* UsagePreferences.swift */; };
+		BCEE162DD9A128990CC68EFD /* WebLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6F3861F92EB305749CB56F /* WebLoginView.swift */; };
+		CCCFD9AC3F3AD3E7DB4C9B54 /* UsageFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98BF938479515822D112524E /* UsageFormat.swift */; };
 		CCF3365E3961E42925D70FD8 /* ProxyTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A69F65CBBB5CF90360D68B5 /* ProxyTab.swift */; };
-		CEE8DEF6256546F461ED4B41 /* AddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB840FAD3941FA139CC9E702 /* AddAccountView.swift */; };
+		D22DE8D575AF67B69D0D2726 /* CustomWebAccountForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA426750507C8B1D04A281 /* CustomWebAccountForm.swift */; };
 		D287F853C9ACE52751FF2691 /* CoderSwitchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A73CA1A6C2BD0D6FA8A4264 /* CoderSwitchApp.swift */; };
-		D31E586EDB5B335872B01613 /* StatusPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62340C112C4016EE69899E79 /* StatusPopover.swift */; };
 		E2748B0DA0E6CFB150910D4A /* AppContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B6C4F1FDB85D1AB6A64D29 /* AppContext.swift */; };
 		E434167283DD555683713E7D /* UsageTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9264D404AC2D98E9FA6D966E /* UsageTab.swift */; };
 		E6BF0D8A18AFE13F961785D6 /* ConfigBackupTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E76DECD9AA749277C78C92 /* ConfigBackupTab.swift */; };
+		FAFEC55872C53E2E5241F27F /* MenuBarMeterRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97F5B69DE2770F907EA3DC7 /* MenuBarMeterRenderer.swift */; };
 		FC28A6387C5E9E6432DA0DBD /* CoderSwitchCore in Frameworks */ = {isa = PBXBuildFile; productRef = D5EF4664EB583758F50084CF /* CoderSwitchCore */; };
 /* End PBXBuildFile section */
 
@@ -39,20 +61,42 @@
 		05E76DECD9AA749277C78C92 /* ConfigBackupTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigBackupTab.swift; sourceTree = "<group>"; };
 		077657DD1B7A7572435EA49B /* SettingsWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindow.swift; sourceTree = "<group>"; };
 		0A4A609601CBE498535B10BA /* CoderSwitchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoderSwitchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0F670A784AA1823D86521362 /* SwitchProxyPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchProxyPanel.swift; sourceTree = "<group>"; };
+		10A5E3FF2C798AD10ED32F0B /* SourceAccountForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceAccountForm.swift; sourceTree = "<group>"; };
+		19347C8CEE9AC54EE5A55E2D /* PopoverScaffold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverScaffold.swift; sourceTree = "<group>"; };
 		1A69F65CBBB5CF90360D68B5 /* ProxyTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyTab.swift; sourceTree = "<group>"; };
+		1C175502DFA4E14E4734CA8A /* AddAccountFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountFlow.swift; sourceTree = "<group>"; };
+		2215DDDCAC133307568B4453 /* AccountUsage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountUsage.swift; sourceTree = "<group>"; };
 		28B6C4F1FDB85D1AB6A64D29 /* AppContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContext.swift; sourceTree = "<group>"; };
+		3A6F3861F92EB305749CB56F /* WebLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebLoginView.swift; sourceTree = "<group>"; };
+		3BBE78270AA24A63EC69722D /* UsageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageBar.swift; sourceTree = "<group>"; };
+		3DFC37A1BCFF0B9EC4C504B9 /* WebLoginModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebLoginModel.swift; sourceTree = "<group>"; };
+		5C1F43A27376B55657817423 /* AddAccountPickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountPickers.swift; sourceTree = "<group>"; };
 		609E7E0F96063655E2474AB6 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
-		62340C112C4016EE69899E79 /* StatusPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusPopover.swift; sourceTree = "<group>"; };
+		612B9A476E804DD7FFA1CCE8 /* UsageSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSection.swift; sourceTree = "<group>"; };
+		64E4F1094AD67C559E3CC249 /* SwitchProxySection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchProxySection.swift; sourceTree = "<group>"; };
+		65AD2CDC85FE89EA1F01E39A /* UsagePreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePreferences.swift; sourceTree = "<group>"; };
+		6D34683775EE524E88CEE29F /* GeneralTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralTab.swift; sourceTree = "<group>"; };
+		71B2F90ADC71D334DC44BE5F /* FlowActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowActionBar.swift; sourceTree = "<group>"; };
 		7CD9D6312AC2958382BCF570 /* OAuthFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthFlowView.swift; sourceTree = "<group>"; };
 		81EEFDDEAA9E3836B661F960 /* CircuitBreakerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircuitBreakerSheet.swift; sourceTree = "<group>"; };
+		8ABA93B759BDB2930EC2A86F /* ProviderStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderStyle.swift; sourceTree = "<group>"; };
+		8CDDF219D3A1806F6B18A164 /* CardStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardStyle.swift; sourceTree = "<group>"; };
 		8D0159E8324F52BC3DA43A96 /* OAuthAccountsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthAccountsTab.swift; sourceTree = "<group>"; };
+		8DCA426750507C8B1D04A281 /* CustomWebAccountForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomWebAccountForm.swift; sourceTree = "<group>"; };
 		8ECEB49362F420191334DB65 /* CoderSwitchCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CoderSwitchCore; path = "../coderswitch-studio/Packages/CoderSwitchCore"; sourceTree = SOURCE_ROOT; };
 		9264D404AC2D98E9FA6D966E /* UsageTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageTab.swift; sourceTree = "<group>"; };
+		96F54D17AC58A8524E4DFA6E /* AccountUsageCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountUsageCard.swift; sourceTree = "<group>"; };
+		98BF938479515822D112524E /* UsageFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageFormat.swift; sourceTree = "<group>"; };
 		9A73CA1A6C2BD0D6FA8A4264 /* CoderSwitchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoderSwitchApp.swift; sourceTree = "<group>"; };
 		9F4AEA0DF138EB072B739E5C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A822A0BE8A16016B78BE2F93 /* StatusPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusPopover.swift; sourceTree = "<group>"; };
 		BE37B8CEB84B2D78AD85DE4D /* CoderSwitch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoderSwitch.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		EB840FAD3941FA139CC9E702 /* AddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountView.swift; sourceTree = "<group>"; };
+		C97F5B69DE2770F907EA3DC7 /* MenuBarMeterRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarMeterRenderer.swift; sourceTree = "<group>"; };
+		DA469F9B3AC99C4BD81B0CB2 /* PopoverChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverChrome.swift; sourceTree = "<group>"; };
+		EC7651BF40198C654A6CF979 /* APIKeyAccountForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyAccountForm.swift; sourceTree = "<group>"; };
 		F59CEF2EC0968CCC78025016 /* AccountsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsTab.swift; sourceTree = "<group>"; };
+		FA7BABBD4BE3A6B9C16EB1E9 /* WebLoginWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebLoginWindowController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,13 +129,62 @@
 			path = CoderSwitch;
 			sourceTree = "<group>";
 		};
+		11A05C4F6D0FC7821592341A /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				8CDDF219D3A1806F6B18A164 /* CardStyle.swift */,
+				8ABA93B759BDB2930EC2A86F /* ProviderStyle.swift */,
+				3BBE78270AA24A63EC69722D /* UsageBar.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		145887516D84901130B5946B /* Popover */ = {
+			isa = PBXGroup;
+			children = (
+				96F54D17AC58A8524E4DFA6E /* AccountUsageCard.swift */,
+				DA469F9B3AC99C4BD81B0CB2 /* PopoverChrome.swift */,
+				19347C8CEE9AC54EE5A55E2D /* PopoverScaffold.swift */,
+				A822A0BE8A16016B78BE2F93 /* StatusPopover.swift */,
+				0F670A784AA1823D86521362 /* SwitchProxyPanel.swift */,
+				64E4F1094AD67C559E3CC249 /* SwitchProxySection.swift */,
+				612B9A476E804DD7FFA1CCE8 /* UsageSection.swift */,
+			);
+			path = Popover;
+			sourceTree = "<group>";
+		};
 		1FD8A0EC7F5A3F81FB386BFB /* App */ = {
 			isa = PBXGroup;
 			children = (
+				2215DDDCAC133307568B4453 /* AccountUsage.swift */,
 				28B6C4F1FDB85D1AB6A64D29 /* AppContext.swift */,
 				9A73CA1A6C2BD0D6FA8A4264 /* CoderSwitchApp.swift */,
+				C97F5B69DE2770F907EA3DC7 /* MenuBarMeterRenderer.swift */,
+				98BF938479515822D112524E /* UsageFormat.swift */,
+				65AD2CDC85FE89EA1F01E39A /* UsagePreferences.swift */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		571372724940DFB9CC909BAE /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				6D34683775EE524E88CEE29F /* GeneralTab.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		82EFCDB7EA518BC9AC62C582 /* AddAccount */ = {
+			isa = PBXGroup;
+			children = (
+				1C175502DFA4E14E4734CA8A /* AddAccountFlow.swift */,
+				5C1F43A27376B55657817423 /* AddAccountPickers.swift */,
+				EC7651BF40198C654A6CF979 /* APIKeyAccountForm.swift */,
+				8DCA426750507C8B1D04A281 /* CustomWebAccountForm.swift */,
+				71B2F90ADC71D334DC44BE5F /* FlowActionBar.swift */,
+				10A5E3FF2C798AD10ED32F0B /* SourceAccountForm.swift */,
+			);
+			path = AddAccount;
 			sourceTree = "<group>";
 		};
 		A02E24105105752D05F5A2EA /* Packages */ = {
@@ -136,20 +229,33 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F5631A9C9AF7DC8332A39BB3 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				3DFC37A1BCFF0B9EC4C504B9 /* WebLoginModel.swift */,
+				3A6F3861F92EB305749CB56F /* WebLoginView.swift */,
+				FA7BABBD4BE3A6B9C16EB1E9 /* WebLoginWindowController.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
 		FC5E846CC5FBFFF61AFED111 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				609E7E0F96063655E2474AB6 /* AboutView.swift */,
 				F59CEF2EC0968CCC78025016 /* AccountsTab.swift */,
-				EB840FAD3941FA139CC9E702 /* AddAccountView.swift */,
 				81EEFDDEAA9E3836B661F960 /* CircuitBreakerSheet.swift */,
 				05E76DECD9AA749277C78C92 /* ConfigBackupTab.swift */,
 				8D0159E8324F52BC3DA43A96 /* OAuthAccountsTab.swift */,
 				7CD9D6312AC2958382BCF570 /* OAuthFlowView.swift */,
 				1A69F65CBBB5CF90360D68B5 /* ProxyTab.swift */,
 				077657DD1B7A7572435EA49B /* SettingsWindow.swift */,
-				62340C112C4016EE69899E79 /* StatusPopover.swift */,
 				9264D404AC2D98E9FA6D966E /* UsageTab.swift */,
+				82EFCDB7EA518BC9AC62C582 /* AddAccount */,
+				11A05C4F6D0FC7821592341A /* Components */,
+				F5631A9C9AF7DC8332A39BB3 /* Login */,
+				145887516D84901130B5946B /* Popover */,
+				571372724940DFB9CC909BAE /* Settings */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -262,19 +368,41 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26481F06E643C9E41F7B4375 /* APIKeyAccountForm.swift in Sources */,
 				667E3E3F1DE6E16BBE3E9E81 /* AboutView.swift in Sources */,
+				2CBB6D88253FEEAF654E9A05 /* AccountUsage.swift in Sources */,
+				9E56EA154A8E9A92EEF0A655 /* AccountUsageCard.swift in Sources */,
 				964EE21AB5A195100E8158FE /* AccountsTab.swift in Sources */,
-				CEE8DEF6256546F461ED4B41 /* AddAccountView.swift in Sources */,
+				5F0F1C0284C5EC9A4DBC2CFE /* AddAccountFlow.swift in Sources */,
+				58F8EE7C4A3B6359B56A26C0 /* AddAccountPickers.swift in Sources */,
 				E2748B0DA0E6CFB150910D4A /* AppContext.swift in Sources */,
+				96F27BF9163DE4EF2AC758AE /* CardStyle.swift in Sources */,
 				0CB3CBE18175C59C35784BEE /* CircuitBreakerSheet.swift in Sources */,
 				D287F853C9ACE52751FF2691 /* CoderSwitchApp.swift in Sources */,
 				E6BF0D8A18AFE13F961785D6 /* ConfigBackupTab.swift in Sources */,
+				D22DE8D575AF67B69D0D2726 /* CustomWebAccountForm.swift in Sources */,
+				14D33C021D38431A544E45AF /* FlowActionBar.swift in Sources */,
+				9CE4FB706FDF27A195410C5C /* GeneralTab.swift in Sources */,
+				FAFEC55872C53E2E5241F27F /* MenuBarMeterRenderer.swift in Sources */,
 				1269F8919996CBF77092F65F /* OAuthAccountsTab.swift in Sources */,
 				73E066C3AA5A60AB99B0E1F6 /* OAuthFlowView.swift in Sources */,
+				2D013DB0F0199F020C64441D /* PopoverChrome.swift in Sources */,
+				1AC6BA60AFEB315D5B4F2425 /* PopoverScaffold.swift in Sources */,
+				7365437C25D53028B580079D /* ProviderStyle.swift in Sources */,
 				CCF3365E3961E42925D70FD8 /* ProxyTab.swift in Sources */,
 				1F3AC856E3F556F5EB4ED7CA /* SettingsWindow.swift in Sources */,
-				D31E586EDB5B335872B01613 /* StatusPopover.swift in Sources */,
+				50371D4BEDE2190053445EC5 /* SourceAccountForm.swift in Sources */,
+				952E8A8B7016B94A271DDE68 /* StatusPopover.swift in Sources */,
+				7F63C4B6534ABD3455813C37 /* SwitchProxyPanel.swift in Sources */,
+				5F6BC6B4B3353ED6961DC0EF /* SwitchProxySection.swift in Sources */,
+				34439D687CA6FAEA9979759B /* UsageBar.swift in Sources */,
+				CCCFD9AC3F3AD3E7DB4C9B54 /* UsageFormat.swift in Sources */,
+				B6E10A48BF70F088E6E852A1 /* UsagePreferences.swift in Sources */,
+				4B1892751519B031DDE886AB /* UsageSection.swift in Sources */,
 				E434167283DD555683713E7D /* UsageTab.swift in Sources */,
+				4E5501822B98A1D11C779849 /* WebLoginModel.swift in Sources */,
+				BCEE162DD9A128990CC68EFD /* WebLoginView.swift in Sources */,
+				779C50ADB14E7309463F1F5B /* WebLoginWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
