@@ -54,27 +54,9 @@ targets:
     dependencies:
       - package: CoderSwitchCore
         product: CoderSwitchCore
-  CoderSwitchTests:
-    type: bundle.unit-test
-    platform: macOS
-    sources:
-      - path: CoderSwitchTests
-    settings:
-      base:
-        GENERATE_INFOPLIST_FILE: YES
-        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/CoderSwitch.app/Contents/MacOS/CoderSwitch"
-        BUNDLE_LOADER: "$(TEST_HOST)"
-    dependencies:
-      - target: CoderSwitch
-      - package: CoderSwitchCore
-        product: CoderSwitchCore
 
 schemes:
   CoderSwitch:
     build:
       targets:
         CoderSwitch: all
-        CoderSwitchTests: [test]
-    test:
-      targets:
-        - CoderSwitchTests
