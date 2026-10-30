@@ -37,6 +37,28 @@ extension Provider {
     }
 }
 
+extension Provider {
+    /// Brand logo in `Assets.xcassets/ProviderLogos` (from lobe-icons, MIT).
+    /// Custom providers have no brand, so they fall back to `symbolName`.
+    var logoAssetName: String? {
+        switch self {
+        case .codex: "codex"
+        case .openAI: "openai"
+        case .anthropic: "anthropic"
+        case .claude: "claude"
+        case .openRouter: "openrouter"
+        case .opencodeGo: "opencode"
+        case .miniMax: "minimax"
+        case .glmCodingPlan: "zai"
+        case .kimiCodingPlan: "kimi"
+        case .qwenCodingPlan: "qwen"
+        case .googleAntigravity: "antigravity"
+        case .commandCode: "commandcode"
+        case .openAICompatible, .anthropicCompatible, .customWeb: nil
+        }
+    }
+}
+
 /// Rounded tile with the provider's symbol, used on cards and in the add-account list.
 struct ProviderGlyph: View {
     let provider: Provider
