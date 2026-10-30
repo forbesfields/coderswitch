@@ -1,4 +1,5 @@
 import SwiftUI
+import CoderSwitchCore
 
 struct AboutView: View {
     @Environment(\.dismiss) private var dismiss

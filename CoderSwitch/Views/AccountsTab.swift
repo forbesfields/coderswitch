@@ -1,4 +1,5 @@
 import SwiftUI
+import CoderSwitchCore
 import AppKit
 
 struct AccountsTab: View {
@@ -148,8 +149,7 @@ struct AccountRow: View {
     @State private var healthMessage: String?
     @State private var confirmingDelete = false
     @State private var showingBreaker = false
-    @State private var showingRename = false
-    @State private var nicknameDraft = ""
+    @State private var showingEdit = false
     @State private var claudeLaunchError: String?
     @State private var showingGoogleModels = true
 
@@ -201,6 +201,11 @@ struct AccountRow: View {
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
+                    if let accessSummary {
+                        Text(accessSummary)
+                            .font(.caption2)
+                            .foregroundStyle(accessSummaryColor)
+                    }
                     if let lastChecked = account.lastCheckedAt {
                         Text("Checked \(lastChecked, style: .relative) ago")
                             .font(.caption2)
@@ -216,13 +221,12 @@ struct AccountRow: View {
                 .buttonStyle(.borderless)
                 .help(account.isEnabled ? "Disable routing and quota polling" : "Enable routing and quota polling")
                 Button {
-                    nicknameDraft = account.label
-                    showingRename = true
+                    showingEdit = true
                 } label: {
                     Image(systemName: "pencil")
                 }
                 .buttonStyle(.borderless)
-                .help("Edit nickname")
+                .help("Edit account")
                 Button {
                     showingBreaker = true
                 } label: {
@@ -289,6 +293,22 @@ struct AccountRow: View {
                     .foregroundStyle(.tertiary)
             }
 
+            if account.provider.isProxyRoutable && account.provider.supportsUsagePolling {
+                if let error = account.lastCheckError {
+                    Text(error)
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                } else if account.usageLimits.isEmpty {
+                    Text("Pending first quota check...")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(account.usageLimits) { limit in
+                        AccountLimitBar(limit: limit)
+                    }
+                }
+            }
+
             if let fetchError {
                 Text(fetchError)
                     .font(.caption2)
@@ -308,7 +328,7 @@ struct AccountRow: View {
                     Label("Open Claude Code", systemImage: "terminal")
                 }
                 .buttonStyle(.bordered)
-                .help("Choose a folder and launch Claude Code through this account")
+                .help("Choose a folder and launch Claude Code with this account's endpoint and API key")
             }
 
             if let claudeLaunchError {
@@ -330,25 +350,10 @@ struct AccountRow: View {
         .sheet(isPresented: $showingBreaker) {
             CircuitBreakerSheet(account: account)
         }
-        .sheet(isPresented: $showingRename) {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Edit Nickname")
-                    .font(.headline)
-                TextField("Nickname", text: $nicknameDraft)
-                    .textFieldStyle(.roundedBorder)
-                HStack {
-                    Spacer()
-                    Button("Cancel") { showingRename = false }
-                    Button("Save") {
-                        store.rename(accountID: account.id, label: nicknameDraft)
-                        showingRename = false
-                    }
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(nicknameDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                }
+        .sheet(isPresented: $showingEdit) {
+            NavigationStack {
+                EditAccountView(account: account)
             }
-            .padding()
-            .frame(width: 360)
         }
     }
 
@@ -356,8 +361,9 @@ struct AccountRow: View {
         switch account.provider {
         case .codex: return .blue
         case .openRouter: return .purple
-        case .miniMax: return .pink
-        case .anthropic, .anthropicCompatible: return .orange
+        case .opencodeGo: return .teal
+        case .miniMax, .glmCodingPlan: return .pink
+        case .anthropic, .anthropicCompatible, .kimiCodingPlan, .qwenCodingPlan: return .orange
         case .openAI, .openAICompatible: return .green
         case .googleAntigravity: return .indigo
         }
@@ -375,6 +381,29 @@ struct AccountRow: View {
                 store.setDefaultModel(accountID: account.id, modelID: modelID)
             }
         )
+    }
+
+    private var accessSummary: String? {
+        let start = account.accessGainedAt
+        let duration = account.accessDuration
+        guard start != nil || duration != nil else { return nil }
+
+        var parts: [String] = []
+        if let start {
+            parts.append("Access: \(start.formatted(date: .abbreviated, time: .omitted))")
+        }
+        if let duration {
+            parts.append("Period: \(duration.value) \(duration.unit.displayName(for: duration.value))")
+        }
+        if let expiry = account.accessExpiresAt() {
+            parts.append("Expires: \(expiry.formatted(date: .abbreviated, time: .omitted))")
+        }
+        return parts.joined(separator: " | ")
+    }
+
+    private var accessSummaryColor: Color {
+        guard let expiry = account.accessExpiresAt() else { return .secondary }
+        return expiry < Date() ? .orange : .secondary
     }
 
     private func fetchModels() async {
@@ -413,6 +442,7 @@ struct AccountRow: View {
         do {
             try ClaudeCodeLauncher.open(
                 account: account,
+                apiKey: store.apiKey(for: account),
                 proxySettings: proxySettings,
                 proxyManager: proxyManager
             )
@@ -424,147 +454,238 @@ struct AccountRow: View {
     }
 }
 
-private enum ClaudeCodeLaunchError: LocalizedError {
-    case incompatibleAccount
-    case cancelled
-    case terminalLaunchFailed
+private struct EditAccountView: View {
+    @Environment(AccountStore.self) private var store
+    @Environment(\.dismiss) private var dismiss
 
-    var errorDescription: String? {
-        switch self {
-        case .incompatibleAccount:
-            return "This account cannot be used with Claude Code."
-        case .cancelled:
-            return nil
-        case .terminalLaunchFailed:
-            return "Could not open Claude Code in Terminal."
-        }
+    let account: Account
+
+    @State private var provider: Provider
+    @State private var label: String
+    @State private var apiKey: String = ""
+    @State private var customEndpoint: String
+    @State private var defaultModel: String
+    @State private var claudeOpusModel: String
+    @State private var claudeSonnetModel: String
+    @State private var claudeHaikuModel: String
+    @State private var hasAccessGainedAt: Bool
+    @State private var accessGainedAt: Date
+    @State private var hasAccessDuration: Bool
+    @State private var accessDurationValue: String
+    @State private var accessDurationUnit: AccountAccessDurationUnit
+    @State private var isEnabled: Bool
+    @State private var errorMessage: String?
+
+    private let apiKeyProviders = Provider.allCases.filter(\.canAddWithAPIKey)
+
+    init(account: Account) {
+        self.account = account
+        _provider = State(initialValue: account.provider)
+        _label = State(initialValue: account.label)
+        _customEndpoint = State(initialValue: account.customEndpoint ?? "")
+        _defaultModel = State(initialValue: account.defaultModel ?? "")
+        _claudeOpusModel = State(initialValue: account.claudeCodeModelOverrides?.opus ?? "")
+        _claudeSonnetModel = State(initialValue: account.claudeCodeModelOverrides?.sonnet ?? "")
+        _claudeHaikuModel = State(initialValue: account.claudeCodeModelOverrides?.haiku ?? "")
+        _hasAccessGainedAt = State(initialValue: account.accessGainedAt != nil)
+        _accessGainedAt = State(initialValue: account.accessGainedAt ?? Date())
+        _hasAccessDuration = State(initialValue: account.accessDuration != nil)
+        _accessDurationValue = State(initialValue: account.accessDuration.map { String($0.value) } ?? "1")
+        _accessDurationUnit = State(initialValue: account.accessDuration?.unit ?? .month)
+        _isEnabled = State(initialValue: account.isEnabled)
     }
-}
 
-private enum ClaudeCodeLauncher {
-    @MainActor
-    static func open(
-        account: Account,
-        proxySettings: ProxySettings,
-        proxyManager: ProxyManager
-    ) throws {
-        guard account.provider.isClaudeCodeCompatible else {
-            throw ClaudeCodeLaunchError.incompatibleAccount
+    private var canEditAPIProfile: Bool {
+        account.provider.canAddWithAPIKey
+    }
+
+    private var canSave: Bool {
+        guard !label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
+        if hasAccessDuration && parsedAccessDuration == nil { return false }
+        if provider.requiresCustomEndpoint {
+            return !customEndpoint.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         }
-        guard let folder = chooseFolder() else {
-            throw ClaudeCodeLaunchError.cancelled
+        return true
+    }
+
+    private var parsedAccessDuration: AccountAccessDuration? {
+        guard hasAccessDuration else { return nil }
+        guard let value = Int(accessDurationValue.trimmingCharacters(in: .whitespacesAndNewlines)),
+              value > 0 else { return nil }
+        return AccountAccessDuration(value: value, unit: accessDurationUnit)
+    }
+
+    var body: some View {
+        Form {
+            Section {
+                TextField("Label", text: $label, prompt: Text("e.g. Personal OpenRouter"))
+                Toggle("Enabled", isOn: $isEnabled)
+            }
+
+            Section("Access") {
+                Toggle("Track access date", isOn: $hasAccessGainedAt)
+                if hasAccessGainedAt {
+                    DatePicker(
+                        "Gained access",
+                        selection: $accessGainedAt,
+                        displayedComponents: .date
+                    )
+                }
+                Toggle("Track account period", isOn: $hasAccessDuration)
+                if hasAccessDuration {
+                    HStack {
+                        TextField("Period", text: $accessDurationValue)
+                            .frame(width: 72)
+                        Picker("Unit", selection: $accessDurationUnit) {
+                            ForEach(AccountAccessDurationUnit.allCases) { unit in
+                                Text(unit.displayName(for: durationValueForLabel)).tag(unit)
+                            }
+                        }
+                    }
+                }
+            }
+
+            Section {
+                if canEditAPIProfile {
+                    Picker("Provider", selection: $provider) {
+                        ForEach(apiKeyProviders) { provider in
+                            Text(provider.displayName).tag(provider)
+                        }
+                    }
+                    SecureField("New API Key", text: $apiKey, prompt: Text("Unchanged"))
+                    TextField(
+                        "Custom Endpoint",
+                        text: $customEndpoint,
+                        prompt: Text(
+                            provider.requiresCustomEndpoint
+                                ? "https://api.example.com/v1"
+                                : "Optional override"
+                        )
+                    )
+                    TextField("Default Model", text: $defaultModel, prompt: Text(provider.defaultModel ?? "Optional"))
+                } else {
+                    LabeledContent("Provider", value: provider.displayName)
+                    if let defaultModel = account.defaultModel {
+                        LabeledContent("Default Model", value: defaultModel)
+                    }
+                }
+            }
+
+            if provider.isClaudeCodeCompatible {
+                Section("Claude Code") {
+                    ClaudeCodeModelPicker(
+                        title: "Opus",
+                        selection: $claudeOpusModel,
+                        options: claudeCodeModelOptions
+                    )
+                    ClaudeCodeModelPicker(
+                        title: "Sonnet",
+                        selection: $claudeSonnetModel,
+                        options: claudeCodeModelOptions
+                    )
+                    ClaudeCodeModelPicker(
+                        title: "Haiku",
+                        selection: $claudeHaikuModel,
+                        options: claudeCodeModelOptions
+                    )
+                }
+            }
+
+            if let errorMessage {
+                Text(errorMessage)
+                    .foregroundStyle(.red)
+                    .font(.caption)
+            }
         }
-
-        switch proxyManager.status {
-        case .running, .starting:
-            break
-        default:
-            proxyManager.start()
+        .formStyle(.grouped)
+        .padding()
+        .frame(width: 460, height: canEditAPIProfile ? 680 : 500)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel") { dismiss() }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Save") { save() }
+                    .disabled(!canSave)
+            }
         }
+        .navigationTitle("Edit Account")
+    }
 
-        try ClaudeCodeConfigSwitcher().switchToCoderSwitch(
-            account: account,
-            proxyBaseURL: proxySettings.baseURL,
-            adminKey: proxySettings.adminKey
-        )
-
-        let scopedToken = "\(proxySettings.adminKey):\(account.id.uuidString)"
-        let script = try createLaunchScript(
-            folder: folder,
-            baseURL: proxySettings.baseURL,
-            authToken: scopedToken,
-            defaultModel: account.claudeCodeDefaultModel
-        )
-
+    private func save() {
         do {
-            try runInTerminal(script)
+            try store.updateProfile(
+                accountID: account.id,
+                label: label,
+                provider: provider,
+                customEndpoint: customEndpoint,
+                defaultModel: defaultModel,
+                accessGainedAt: hasAccessGainedAt ? accessGainedAt : nil,
+                accessDuration: parsedAccessDuration,
+                isEnabled: isEnabled,
+                apiKey: canEditAPIProfile ? apiKey : nil,
+                claudeCodeModelOverrides: provider.isClaudeCodeCompatible
+                    ? ClaudeCodeModelOverrides.normalized(
+                        opus: claudeOpusModel,
+                        sonnet: claudeSonnetModel,
+                        haiku: claudeHaikuModel
+                    )
+                    : nil
+            )
+            dismiss()
         } catch {
-            try? FileManager.default.removeItem(at: script)
-            throw error
+            errorMessage = "Could not save: \(error.localizedDescription)"
         }
     }
 
-    @MainActor
-    private static func chooseFolder() -> URL? {
-        let panel = NSOpenPanel()
-        panel.title = "Open Claude Code"
-        panel.message = "Choose a folder for Claude Code."
-        panel.prompt = "Open Claude Code"
-        panel.canChooseFiles = false
-        panel.canChooseDirectories = true
-        panel.allowsMultipleSelection = false
-        panel.canCreateDirectories = true
-        return panel.runModal() == .OK ? panel.url : nil
+    private var durationValueForLabel: Int {
+        Int(accessDurationValue.trimmingCharacters(in: .whitespacesAndNewlines)) ?? 2
     }
 
-    private static func createLaunchScript(
-        folder: URL,
-        baseURL: String,
-        authToken: String,
-        defaultModel: String?
-    ) throws -> URL {
-        let script = FileManager.default.temporaryDirectory
-            .appendingPathComponent("coderswitch-claude-\(UUID().uuidString).zsh")
-        let modelEnvironment = defaultModel.map { model in
-            """
-            export ANTHROPIC_MODEL=\(model.shellQuotedForTerminal)
-            export ANTHROPIC_DEFAULT_HAIKU_MODEL=\(model.shellQuotedForTerminal)
-            export ANTHROPIC_DEFAULT_SONNET_MODEL=\(model.shellQuotedForTerminal)
-            export ANTHROPIC_DEFAULT_OPUS_MODEL=\(model.shellQuotedForTerminal)
-            """
-        } ?? """
-        unset ANTHROPIC_MODEL
-        unset ANTHROPIC_DEFAULT_HAIKU_MODEL
-        unset ANTHROPIC_DEFAULT_SONNET_MODEL
-        unset ANTHROPIC_DEFAULT_OPUS_MODEL
-        """
-        let contents = """
-        #!/bin/zsh
-        unset HISTFILE
-        rm -f \(script.path.shellQuotedForTerminal)
-        cd \(folder.path.shellQuotedForTerminal) || exit 1
-        unset ANTHROPIC_API_KEY
-        unset ANTHROPIC_MODEL
-        unset ANTHROPIC_DEFAULT_HAIKU_MODEL
-        unset ANTHROPIC_DEFAULT_SONNET_MODEL
-        unset ANTHROPIC_DEFAULT_OPUS_MODEL
-        export ANTHROPIC_BASE_URL=\(baseURL.shellQuotedForTerminal)
-        export ANTHROPIC_AUTH_TOKEN=\(authToken.shellQuotedForTerminal)
-        \(modelEnvironment)
-        exec claude --dangerously-skip-permissions
-        """
-        try contents.write(to: script, atomically: true, encoding: .utf8)
-        try FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: script.path)
-        return script
-    }
+    private var claudeCodeModelOptions: [ProviderModel] {
+        var seen = Set<String>()
+        var models: [ProviderModel] = []
 
-    private static func runInTerminal(_ script: URL) throws {
-        let appleScript = """
-        tell application "Terminal"
-            activate
-            do script \(script.path.shellQuotedForTerminal.appleScriptLiteral)
-        end tell
-        """
-
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
-        process.arguments = ["-e", appleScript]
-        try process.run()
-        process.waitUntilExit()
-
-        guard process.terminationStatus == 0 else {
-            throw ClaudeCodeLaunchError.terminalLaunchFailed
+        func append(_ model: ProviderModel) {
+            let id = model.id.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !id.isEmpty, seen.insert(id).inserted else { return }
+            models.append(model)
         }
+
+        if provider == account.provider {
+            for model in account.modelCatalog {
+                append(model)
+            }
+        } else {
+            for model in provider.bundledModels {
+                append(model)
+            }
+        }
+
+        if let defaultModel = defaultModel.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty {
+            append(ProviderModel(id: defaultModel, name: defaultModel, ownedBy: provider.displayName))
+        }
+
+        return models
     }
 }
 
-private extension String {
-    var shellQuotedForTerminal: String {
-        "'\(replacingOccurrences(of: "'", with: "'\\''"))'"
-    }
+private struct ClaudeCodeModelPicker: View {
+    let title: String
+    @Binding var selection: String
+    let options: [ProviderModel]
 
-    var appleScriptLiteral: String {
-        "\"\(replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\""))\""
+    var body: some View {
+        if options.isEmpty {
+            TextField(title, text: $selection, prompt: Text("Account default"))
+        } else {
+            Picker(title, selection: $selection) {
+                Text("Account default").tag("")
+                ForEach(options) { model in
+                    Text(model.displayName).tag(model.id)
+                }
+            }
+        }
     }
 }
 
@@ -691,4 +812,8 @@ private struct AccountLimitBar: View {
             }
         }
     }
+}
+
+private extension String {
+    var nonEmpty: String? { isEmpty ? nil : self }
 }

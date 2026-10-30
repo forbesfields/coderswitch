@@ -1,4 +1,5 @@
 import Foundation
+import CoderSwitchCore
 import Observation
 
 /// Top-level container created exactly once at app launch. Owns the

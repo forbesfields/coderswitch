@@ -21,20 +21,6 @@
                ReferencedContainer = "container:CoderSwitch.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "NO"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "52906322270CCF07335E21A6"
-               BuildableName = "CoderSwitchTests.xctest"
-               BlueprintName = "CoderSwitchTests"
-               ReferencedContainer = "container:CoderSwitch.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -53,20 +39,7 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "52906322270CCF07335E21A6"
-               BuildableName = "CoderSwitchTests.xctest"
-               BlueprintName = "CoderSwitchTests"
-               ReferencedContainer = "container:CoderSwitch.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
-      <CommandLineArguments>
-      </CommandLineArguments>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
