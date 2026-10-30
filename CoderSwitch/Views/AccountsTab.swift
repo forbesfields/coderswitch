@@ -65,7 +65,7 @@ struct AccountsTab: View {
                         ContentUnavailableView(
                             "No accounts",
                             systemImage: "person.crop.circle.badge.plus",
-                            description: Text("Click + to add an API key.")
+                            description: Text("Click + to add an account.")
                         )
                     } else if filteredAccounts.isEmpty {
                         ContentUnavailableView.search(text: search)
@@ -87,9 +87,7 @@ struct AccountsTab: View {
                 }
             }
             .sheet(isPresented: $showingAdd) {
-                NavigationStack {
-                    AddAccountView()
-                }
+                AddAccountFlow(onFinish: { showingAdd = false })
             }
         }
     }
@@ -193,9 +191,16 @@ struct AccountRow: View {
                                 .help("Failure threshold exceeded — check provider status")
                         }
                     }
-                    Text(account.endpoint)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    if !account.endpoint.isEmpty {
+                        Text(account.endpoint)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    if account.effectiveCredentialSource != .oauth {
+                        Label(account.effectiveCredentialSource.displayName, systemImage: account.effectiveCredentialSource.symbolName)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
                     if let defaultModel = account.defaultModel {
                         Text("Default: \(defaultModel)")
                             .font(.caption2)
@@ -234,7 +239,7 @@ struct AccountRow: View {
                 }
                 .buttonStyle(.borderless)
                 .help("Circuit breaker (warn-only)")
-                if account.provider != .codex {
+                if account.provider.isProxyRoutable {
                     Button {
                         Task { await testConnection() }
                     } label: {
@@ -321,6 +326,16 @@ struct AccountRow: View {
                     .foregroundStyle(.secondary)
             }
 
+            if account.usesWebSession {
+                Button {
+                    AppShell.shared.showLoginWindow(for: account)
+                } label: {
+                    Label("Sign in again", systemImage: "person.badge.key")
+                }
+                .buttonStyle(.bordered)
+                .help("Open this account's sign-in window")
+            }
+
             if account.provider.isClaudeCodeCompatible {
                 Button {
                     openClaudeCode()
@@ -357,20 +372,7 @@ struct AccountRow: View {
         }
     }
 
-    private var providerColor: Color {
-        switch account.provider {
-        case .codex: return .blue
-        case .openRouter: return .purple
-        case .opencodeGo: return .teal
-        case .miniMax, .glmCodingPlan: return .pink
-        case .anthropic, .anthropicCompatible, .kimiCodingPlan, .qwenCodingPlan: return .orange
-        case .openAI, .openAICompatible: return .green
-        case .googleAntigravity: return .indigo
-        case .claude: return .orange
-        case .commandCode: return .mint
-        case .customWeb: return .gray
-        }
-    }
+    private var providerColor: Color { account.provider.tintColor }
 
     private var codexAuthSource: OAuthAccountAuthSource? {
         guard account.provider == .codex else { return nil }

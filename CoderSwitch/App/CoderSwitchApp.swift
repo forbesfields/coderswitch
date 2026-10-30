@@ -68,6 +68,8 @@ final class AppShell: NSObject {
     private var context: AppContext?
     private var oauthStore: OAuthStore?
     private var settingsWindow: NSWindow?
+    private var addAccountWindow: NSWindow?
+    private var loginWindows: [UUID: WebLoginWindowController] = [:]
 
     private override init() {}
 
@@ -81,29 +83,70 @@ final class AppShell: NSObject {
         guard let context, let oauthStore else { return }
 
         if let settingsWindow {
-            NSApp.setActivationPolicy(.regular)
-            settingsWindow.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
+            bringToFront(settingsWindow)
             return
         }
 
-        let controller = NSHostingController(
-            rootView: SettingsWindow()
-                .environment(context.accountStore)
-                .environment(context.proxySettings)
-                .environment(context.proxyManager)
-                .environment(context.quotaPoller)
-                .environment(context.requestLogStore)
-                .environment(oauthStore)
-        )
+        let controller = NSHostingController(rootView: SettingsWindow().appEnvironment(context, oauthStore: oauthStore))
         let window = NSWindow(contentViewController: controller)
         window.title = "CoderSwitch Settings"
-        window.styleMask = [.titled, .closable, .miniaturizable]
+        window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
+        window.contentMinSize = NSSize(width: 720, height: 520)
+        window.setContentSize(NSSize(width: 800, height: 600))
         window.isReleasedWhenClosed = false
         window.center()
+        window.setFrameAutosaveName("CoderSwitchSettings")
         settingsWindow = window
+        bringToFront(window)
+    }
+
+    func showAddAccountWindow() {
+        guard let context, let oauthStore else { return }
+
+        if let addAccountWindow {
+            bringToFront(addAccountWindow)
+            return
+        }
+
+        let window = NSWindow()
+        let root = AddAccountFlow(onFinish: { [weak window] in window?.close() })
+            .appEnvironment(context, oauthStore: oauthStore)
+        window.contentViewController = NSHostingController(rootView: root)
+        window.title = "Add Account"
+        window.styleMask = [.titled, .closable]
+        window.isReleasedWhenClosed = false
+        window.center()
+        addAccountWindow = window
+        NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification, object: window, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in self?.addAccountWindow = nil }
+        }
+        bringToFront(window)
+    }
+
+    /// One login window per account; asking again focuses the existing one.
+    func showLoginWindow(for account: Account) {
+        guard let context else { return }
+
+        if let existing = loginWindows[account.id] {
+            existing.showWindow(nil)
+            bringToFront(existing.window)
+            return
+        }
+
+        let controller = WebLoginWindowController(account: account) { [weak self] in
+            self?.loginWindows[account.id] = nil
+            Task { await context.quotaPoller.pollOnce() }
+        }
+        loginWindows[account.id] = controller
+        controller.showWindow(nil)
+        bringToFront(controller.window)
+    }
+
+    private func bringToFront(_ window: NSWindow?) {
         NSApp.setActivationPolicy(.regular)
-        window.makeKeyAndOrderFront(nil)
+        window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
 }
@@ -117,6 +160,8 @@ final class NativeStatusItemController: NSObject {
     private weak var oauthStore: OAuthStore?
     private var popover: NSPopover?
     private weak var highlightedButton: NSButton?
+    private var lastMeterState: MenuBarMeterState?
+    private var defaultsObserver: NSObjectProtocol?
 
     private override init() {
         super.init()
@@ -130,20 +175,67 @@ final class NativeStatusItemController: NSObject {
     func install() {
         guard context != nil, oauthStore != nil else { return }
 
-        let item = statusItem ?? NSStatusBar.system.statusItem(withLength: 32)
+        let item = statusItem ?? NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem = item
         item.isVisible = true
-        item.length = 32
+        item.length = NSStatusItem.variableLength
 
         guard let button = item.button else { return }
-        button.image = nil
-        button.title = "CS"
-        button.toolTip = "CoderSwitch"
+        button.font = .monospacedDigitSystemFont(ofSize: 12, weight: .medium)
         button.setAccessibilityTitle("CoderSwitch")
         button.setAccessibilityIdentifier("CoderSwitch.NativeStatusItem")
         button.target = self
         button.action = #selector(togglePopover(_:))
         button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+        startObservingMeter()
+    }
+
+    /// Redraws the meter whenever the account store changes. The tracking closure fires once,
+    /// so each change re-arms it. Preference changes arrive through UserDefaults instead.
+    private func observeMeter() {
+        let state = withObservationTracking {
+            currentMeterState()
+        } onChange: { [weak self] in
+            Task { @MainActor in self?.observeMeter() }
+        }
+        apply(state)
+    }
+
+    private func startObservingMeter() {
+        guard defaultsObserver == nil else { return }
+        defaultsObserver = NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                guard let self else { return }
+                self.apply(self.currentMeterState())
+            }
+        }
+        observeMeter()
+    }
+
+    private func currentMeterState() -> MenuBarMeterState {
+        let defaults = UserDefaults.standard
+        return MenuBarMeterState.make(
+            accounts: context?.accountStore.accounts ?? [],
+            selection: defaults.string(forKey: UsagePreferences.followedAccountKey) ?? UsagePreferences.automaticFollow,
+            showsPercentage: defaults.bool(forKey: UsagePreferences.showsPercentageKey)
+        )
+    }
+
+    private func apply(_ state: MenuBarMeterState) {
+        guard state != lastMeterState, let button = statusItem?.button else { return }
+        lastMeterState = state
+        button.image = MenuBarMeterRenderer.image(session: state.reading.session, weekly: state.reading.weekly)
+        if let text = state.percentText {
+            button.title = text
+            button.imagePosition = .imageLeading
+        } else {
+            button.title = ""
+            button.imagePosition = .imageOnly
+        }
+        button.toolTip = state.tooltip
+        button.setAccessibilityValue(state.tooltip)
     }
 
     @objc private func togglePopover(_ sender: NSStatusBarButton) {
@@ -158,10 +250,20 @@ final class NativeStatusItemController: NSObject {
             context: context,
             oauthStore: oauthStore,
             delegate: self,
-            openSettings: { [weak self] in
-                self?.closePopover()
-                AppShell.shared.showSettingsWindow()
-            }
+            actions: StatusPopoverActions(
+                openSettings: { [weak self] in
+                    self?.closePopover()
+                    AppShell.shared.showSettingsWindow()
+                },
+                addAccount: { [weak self] in
+                    self?.closePopover()
+                    AppShell.shared.showAddAccountWindow()
+                },
+                signIn: { [weak self] account in
+                    self?.closePopover()
+                    AppShell.shared.showLoginWindow(for: account)
+                }
+            )
         )
         self.popover = popover
         highlightedButton = sender
@@ -187,33 +289,22 @@ extension NativeStatusItemController: NSPopoverDelegate {
 
 @MainActor
 private enum StatusPopoverPresenter {
-    static let contentSize = NSSize(width: 340, height: 720)
-
     static func makePopover(
         context: AppContext,
         oauthStore: OAuthStore,
         delegate: NSPopoverDelegate,
-        openSettings: @escaping () -> Void
+        actions: StatusPopoverActions
     ) -> NSPopover {
-        let content = ScrollView {
-            StatusPopover(openSettings: openSettings)
-                .environment(context.accountStore)
-                .environment(context.proxySettings)
-                .environment(context.proxyManager)
-                .environment(context.quotaPoller)
-                .environment(context.requestLogStore)
-                .environment(oauthStore)
-        }
-        .frame(width: contentSize.width, height: contentSize.height)
-
-        let hosting = NSHostingController(rootView: content)
-        hosting.preferredContentSize = contentSize
-        hosting.view.frame = NSRect(origin: .zero, size: contentSize)
+        let hosting = NSHostingController(
+            rootView: StatusPopover(actions: actions).appEnvironment(context, oauthStore: oauthStore)
+        )
+        // The popover follows the SwiftUI content height, which StatusPopover caps with a scroll view.
+        hosting.sizingOptions = [.preferredContentSize]
+        hosting.view.layoutSubtreeIfNeeded()
 
         let popover = NSPopover()
         popover.behavior = .transient
         popover.animates = true
-        popover.contentSize = contentSize
         popover.contentViewController = hosting
         popover.delegate = delegate
         return popover
