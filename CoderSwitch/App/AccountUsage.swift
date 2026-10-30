@@ -80,6 +80,8 @@ extension Account {
 
 /// Which account the menu bar meter follows, and what it should draw.
 struct MenuBarMeterState: Equatable {
+    /// The followed account's provider; its logo leads the meter. Nil when there is no account.
+    var provider: Provider?
     var reading: MeterReading
     var showsPercentage: Bool
     var tooltip: String
@@ -91,10 +93,11 @@ struct MenuBarMeterState: Equatable {
 
     static func make(accounts: [Account], selection: String, showsPercentage: Bool) -> MenuBarMeterState {
         guard let account = followedAccount(in: accounts, selection: selection) else {
-            return MenuBarMeterState(reading: .empty, showsPercentage: showsPercentage, tooltip: "CoderSwitch")
+            return MenuBarMeterState(provider: nil, reading: .empty, showsPercentage: showsPercentage, tooltip: "CoderSwitch")
         }
         let reading = account.meterReading
         return MenuBarMeterState(
+            provider: account.provider,
             reading: reading,
             showsPercentage: showsPercentage,
             tooltip: tooltip(for: account, reading: reading, among: accounts)
