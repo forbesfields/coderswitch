@@ -366,6 +366,9 @@ struct AccountRow: View {
         case .anthropic, .anthropicCompatible, .kimiCodingPlan, .qwenCodingPlan: return .orange
         case .openAI, .openAICompatible: return .green
         case .googleAntigravity: return .indigo
+        case .claude: return .orange
+        case .commandCode: return .mint
+        case .customWeb: return .gray
         }
     }
 
