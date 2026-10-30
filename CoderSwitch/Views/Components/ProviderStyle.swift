@@ -41,7 +41,7 @@ extension Provider {
 
 extension Provider {
     /// Brand logo in `Assets.xcassets/ProviderLogos` (from lobe-icons, MIT).
-    /// Custom providers have no brand, so they fall back to `symbolName`.
+    /// Custom providers and brands without a bundled logo fall back to `symbolName`.
     var logoAssetName: String? {
         switch self {
         case .codex: "codex"
@@ -56,7 +56,7 @@ extension Provider {
         case .qwenCodingPlan: "qwen"
         case .googleAntigravity: "antigravity"
         case .commandCode: "commandcode"
-        case .openAICompatible, .anthropicCompatible, .customWeb: nil
+        case .refuseless, .openAICompatible, .anthropicCompatible, .customWeb: nil
         }
     }
 }
