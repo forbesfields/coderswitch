@@ -6,6 +6,7 @@ extension Provider {
         switch self {
         case .codex: .blue
         case .openRouter: .purple
+        case .refuseless: .red
         case .opencodeGo: .teal
         case .miniMax, .glmCodingPlan: .pink
         case .anthropic, .anthropicCompatible, .kimiCodingPlan, .qwenCodingPlan: .orange
@@ -23,6 +24,7 @@ extension Provider {
         case .openAI: "sparkle"
         case .anthropic, .anthropicCompatible: "a.circle"
         case .openRouter: "arrow.triangle.branch"
+        case .refuseless: "infinity"
         case .opencodeGo: "curlybraces"
         case .miniMax: "waveform"
         case .glmCodingPlan: "z.square"
@@ -39,7 +41,7 @@ extension Provider {
 
 extension Provider {
     /// Brand logo in `Assets.xcassets/ProviderLogos` (from lobe-icons, MIT).
-    /// Custom providers have no brand, so they fall back to `symbolName`.
+    /// Custom providers and brands without a bundled logo fall back to `symbolName`.
     var logoAssetName: String? {
         switch self {
         case .codex: "codex"
@@ -54,7 +56,7 @@ extension Provider {
         case .qwenCodingPlan: "qwen"
         case .googleAntigravity: "antigravity"
         case .commandCode: "commandcode"
-        case .openAICompatible, .anthropicCompatible, .customWeb: nil
+        case .refuseless, .openAICompatible, .anthropicCompatible, .customWeb: nil
         }
     }
 }
