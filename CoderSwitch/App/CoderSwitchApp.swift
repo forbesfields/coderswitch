@@ -162,6 +162,7 @@ final class NativeStatusItemController: NSObject {
     private weak var highlightedButton: NSButton?
     private var lastMeterState: MenuBarMeterState?
     private var defaultsObserver: NSObjectProtocol?
+    private var appearanceObservation: NSKeyValueObservation?
 
     private override init() {
         super.init()
@@ -187,6 +188,15 @@ final class NativeStatusItemController: NSObject {
         button.target = self
         button.action = #selector(togglePopover(_:))
         button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+        // The meter is not a template image, so it picks white or black itself.
+        // Redraw when the menu bar switches between light and dark.
+        appearanceObservation = button.observe(\.effectiveAppearance) { [weak self] _, _ in
+            Task { @MainActor in
+                guard let self else { return }
+                self.lastMeterState = nil
+                self.apply(self.currentMeterState())
+            }
+        }
         startObservingMeter()
     }
 
@@ -226,7 +236,7 @@ final class NativeStatusItemController: NSObject {
     private func apply(_ state: MenuBarMeterState) {
         guard state != lastMeterState, let button = statusItem?.button else { return }
         lastMeterState = state
-        button.image = MenuBarMeterRenderer.image(session: state.reading.session, weekly: state.reading.weekly)
+        button.image = MenuBarMeterRenderer.image(for: state)
         if let text = state.percentText {
             button.title = text
             button.imagePosition = .imageLeading

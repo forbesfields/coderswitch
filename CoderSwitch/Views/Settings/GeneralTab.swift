@@ -16,7 +16,7 @@ struct GeneralTab: View {
     var body: some View {
         Form {
             Section {
-                Picker("Followed account", selection: followedSelection) {
+                Picker("Favourite account", selection: followedSelection) {
                     Text("Automatic (highest usage)").tag(UsagePreferences.automaticFollow)
                     ForEach(store.accounts) { account in
                         Text("\(account.provider.displayName) · \(account.label)").tag(account.id.uuidString)
@@ -29,7 +29,7 @@ struct GeneralTab: View {
             } header: {
                 Text("Menu bar")
             } footer: {
-                Text("The top bar is session usage and the bottom bar is weekly usage. Automatic follows the enabled account closest to its limit.")
+                Text("The menu bar shows the favourite account's logo. The top bar is session usage and the bottom bar is weekly usage. A bar turns orange above 50% and red above 80%. Automatic follows the enabled account closest to its limit.")
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -116,7 +116,7 @@ struct MenuBarMeterPreview: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            Image(nsImage: MenuBarMeterRenderer.image(session: state.reading.session, weekly: state.reading.weekly))
+            Image(nsImage: MenuBarMeterRenderer.image(for: state))
             if let text = state.percentText {
                 Text(text)
                     .font(.system(size: 12, weight: .medium).monospacedDigit())
