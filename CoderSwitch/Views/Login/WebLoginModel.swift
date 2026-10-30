@@ -48,6 +48,17 @@ final class WebLoginModel: NSObject {
         webView.goBack()
     }
 
+    /// Stores cookies pasted from a normal browser in this account's jar, then reopens the
+    /// login page so the user can see they are signed in.
+    func importCookies(_ text: String) async throws -> Int {
+        guard let siteURL = account.webLoginURL else {
+            throw PastedCookieError.noCookies
+        }
+        let count = try await WebSessionClient.shared.importCookies(text, for: account.id, siteURL: siteURL)
+        load()
+        return count
+    }
+
     func stop() {
         webView.stopLoading()
         webView.navigationDelegate = nil

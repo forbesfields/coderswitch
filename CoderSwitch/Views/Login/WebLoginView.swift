@@ -6,6 +6,8 @@ struct WebLoginView: View {
     let model: WebLoginModel
     let onDone: () -> Void
 
+    @State private var isPastingCookie = false
+
     var body: some View {
         VStack(spacing: 0) {
             header
@@ -24,16 +26,29 @@ struct WebLoginView: View {
                 }
             }
             Divider()
+            footer
+        }
+        .sheet(isPresented: $isPastingCookie) {
+            PasteCookieSheet(host: model.account.webLoginURL?.host ?? model.host) { text in
+                try await model.importCookies(text)
+            }
+        }
+    }
+
+    private var footer: some View {
+        HStack(spacing: 10) {
             Label(
-                "Google sign-in may be blocked in embedded browsers. If it fails, use email login instead.",
+                "Google sign-in is blocked in this window. Sign in with your normal browser, then paste its cookie.",
                 systemImage: "info.circle"
             )
             .font(.caption)
             .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 7)
+            Spacer(minLength: 8)
+            Button("Paste cookie…") { isPastingCookie = true }
+                .controlSize(.small)
         }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 7)
     }
 
     private var header: some View {
