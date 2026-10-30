@@ -29,6 +29,7 @@
 		73E066C3AA5A60AB99B0E1F6 /* OAuthFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD9D6312AC2958382BCF570 /* OAuthFlowView.swift */; };
 		779C50ADB14E7309463F1F5B /* WebLoginWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7BABBD4BE3A6B9C16EB1E9 /* WebLoginWindowController.swift */; };
 		7F63C4B6534ABD3455813C37 /* SwitchProxyPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F670A784AA1823D86521362 /* SwitchProxyPanel.swift */; };
+		8988D5BDF22DB03129943D57 /* PasteCookieSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53CC301565AC59D8483EB1D /* PasteCookieSheet.swift */; };
 		952E8A8B7016B94A271DDE68 /* StatusPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = A822A0BE8A16016B78BE2F93 /* StatusPopover.swift */; };
 		964EE21AB5A195100E8158FE /* AccountsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59CEF2EC0968CCC78025016 /* AccountsTab.swift */; };
 		96F27BF9163DE4EF2AC758AE /* CardStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CDDF219D3A1806F6B18A164 /* CardStyle.swift */; };
@@ -90,6 +91,7 @@
 		98BF938479515822D112524E /* UsageFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageFormat.swift; sourceTree = "<group>"; };
 		9A73CA1A6C2BD0D6FA8A4264 /* CoderSwitchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoderSwitchApp.swift; sourceTree = "<group>"; };
 		9F4AEA0DF138EB072B739E5C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A53CC301565AC59D8483EB1D /* PasteCookieSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteCookieSheet.swift; sourceTree = "<group>"; };
 		A822A0BE8A16016B78BE2F93 /* StatusPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusPopover.swift; sourceTree = "<group>"; };
 		BE37B8CEB84B2D78AD85DE4D /* CoderSwitch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoderSwitch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97F5B69DE2770F907EA3DC7 /* MenuBarMeterRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarMeterRenderer.swift; sourceTree = "<group>"; };
@@ -232,6 +234,7 @@
 		F5631A9C9AF7DC8332A39BB3 /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				A53CC301565AC59D8483EB1D /* PasteCookieSheet.swift */,
 				3DFC37A1BCFF0B9EC4C504B9 /* WebLoginModel.swift */,
 				3A6F3861F92EB305749CB56F /* WebLoginView.swift */,
 				FA7BABBD4BE3A6B9C16EB1E9 /* WebLoginWindowController.swift */,
@@ -386,6 +389,7 @@
 				FAFEC55872C53E2E5241F27F /* MenuBarMeterRenderer.swift in Sources */,
 				1269F8919996CBF77092F65F /* OAuthAccountsTab.swift in Sources */,
 				73E066C3AA5A60AB99B0E1F6 /* OAuthFlowView.swift in Sources */,
+				8988D5BDF22DB03129943D57 /* PasteCookieSheet.swift in Sources */,
 				2D013DB0F0199F020C64441D /* PopoverChrome.swift in Sources */,
 				1AC6BA60AFEB315D5B4F2425 /* PopoverScaffold.swift in Sources */,
 				7365437C25D53028B580079D /* ProviderStyle.swift in Sources */,
