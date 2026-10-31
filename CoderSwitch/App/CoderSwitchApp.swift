@@ -180,6 +180,7 @@ final class NativeStatusItemController: NSObject {
     private var lastMeterState: MenuBarMeterState?
     private var defaultsObserver: NSObjectProtocol?
     private var appearanceObservation: NSKeyValueObservation?
+    private var lastAppearanceIsDark: Bool?
     private var outsideClickMonitor: Any?
 
     private override init() {
@@ -207,10 +208,17 @@ final class NativeStatusItemController: NSObject {
         button.action = #selector(togglePopover(_:))
         button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         // The meter is not a template image, so it picks white or black itself.
-        // Redraw when the menu bar switches between light and dark.
+        // Redraw when the menu bar switches between light and dark. AppKit also changes the
+        // button's appearance each time it snapshots the item for the menu bar, and that
+        // snapshot follows every new image, so redraw only on a real light/dark change.
+        // Without this check the two keep triggering each other at full CPU.
+        lastAppearanceIsDark = MenuBarMeterRenderer.isDark(button.effectiveAppearance)
         appearanceObservation = button.observe(\.effectiveAppearance) { [weak self] _, _ in
             Task { @MainActor in
-                guard let self else { return }
+                guard let self, let button = self.statusItem?.button else { return }
+                let isDark = MenuBarMeterRenderer.isDark(button.effectiveAppearance)
+                guard isDark != self.lastAppearanceIsDark else { return }
+                self.lastAppearanceIsDark = isDark
                 self.lastMeterState = nil
                 self.apply(self.currentMeterState())
             }
