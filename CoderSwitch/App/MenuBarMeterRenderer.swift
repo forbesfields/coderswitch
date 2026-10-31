@@ -51,8 +51,12 @@ enum MenuBarMeterRenderer {
 
     /// White on a dark menu bar, black on a light one.
     private static func foregroundColor() -> NSColor {
-        let dark = NSAppearance.currentDrawing().bestMatch(from: [.darkAqua, .vibrantDark, .aqua, .vibrantLight])
-        return dark == .darkAqua || dark == .vibrantDark ? .white : .black
+        isDark(NSAppearance.currentDrawing()) ? .white : .black
+    }
+
+    static func isDark(_ appearance: NSAppearance) -> Bool {
+        let match = appearance.bestMatch(from: [.darkAqua, .vibrantDark, .aqua, .vibrantLight])
+        return match == .darkAqua || match == .vibrantDark
     }
 
     /// The bundled brand logo, or the provider's SF Symbol for custom providers.
